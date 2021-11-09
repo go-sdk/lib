@@ -1,0 +1,7 @@
+log:
+  console:
+    level: debug
+    color: true
+  file:
+    level: info
+    path: ./test.log
