@@ -7,4 +7,8 @@ LDFLAGS += -X "github.com/go-sdk/lib/app.VERSION=$(VERSION)"
 LDFLAGS += -X "github.com/go-sdk/lib/app.GITHASH=$(GITHASH)"
 
 test:
+	@$(MAKE) tidy
 	CGO_ENABLED=1 $(GO) test -race -ldflags '$(LDFLAGS)' -count=1 -cover -v ./...
+
+tidy:
+	$(GO) mod tidy

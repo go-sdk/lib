@@ -6,6 +6,8 @@ require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/imdario/mergo v0.3.12
 	github.com/json-iterator/go v1.1.12
+	github.com/rs/xid v1.3.0
+	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0
 	github.com/thoas/go-funk v0.9.1
