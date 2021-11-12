@@ -1,10 +1,11 @@
 GO 	    ?= GO111MODULE=on go
-VERSION ?= test
-GITHASH ?= -
+VERSION ?= latest
+GITHASH ?= $(shell git rev-parse --short HEAD)
 
 LDFLAGS := -s -w
 LDFLAGS += -X "github.com/go-sdk/lib/app.VERSION=$(VERSION)"
 LDFLAGS += -X "github.com/go-sdk/lib/app.GITHASH=$(GITHASH)"
+LDFLAGS += -X "github.com/go-sdk/lib/app.BUILT=$(shell date +%FT%T%z)"
 
 test:
 	@$(MAKE) tidy
