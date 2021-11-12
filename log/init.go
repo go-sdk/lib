@@ -34,11 +34,17 @@ func init() {
 		hooks = append(hooks, h)
 	}
 
-	logger = New()
-	logger.ReplaceHooks(hooks...)
+	if len(hooks) > 0 {
+		logger = New()
+		logger.ReplaceHooks(hooks...)
+	}
 }
 
-var logger = NewWithLevel(PanicLevel)
+var logger = NewWithLevel(DebugLevel)
+
+func DefaultLogger() *Logger {
+	return logger
+}
 
 func Debug(v ...interface{}) {
 	logger.Debug(v...)

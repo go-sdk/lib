@@ -4,11 +4,12 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
+
+const timeFormatter = "2006-01-02T15:04:05.999Z07:00"
 
 type (
 	Hook       = logrus.Hook
@@ -71,7 +72,7 @@ func NewConsoleHook(configs ...*ConsoleHookConfig) *hook {
 		ForceColors:     config.ForceColors,
 		DisableQuote:    true,
 		FullTimestamp:   true,
-		TimestampFormat: time.RFC3339Nano,
+		TimestampFormat: timeFormatter,
 	}
 	h.SetLevel(config.Level)
 	return h
@@ -120,7 +121,7 @@ func NewFileHook(configs ...*FileHookConfig) *hook {
 	}
 	if config.ForceJSON {
 		h.f = &JSONFormatter{
-			TimestampFormat:   time.RFC3339Nano,
+			TimestampFormat:   timeFormatter,
 			DisableHTMLEscape: true,
 		}
 	} else {
@@ -128,7 +129,7 @@ func NewFileHook(configs ...*FileHookConfig) *hook {
 			ForceColors:     config.ForceColors,
 			DisableQuote:    true,
 			FullTimestamp:   true,
-			TimestampFormat: time.RFC3339Nano,
+			TimestampFormat: timeFormatter,
 		}
 	}
 	h.SetLevel(config.Level)
