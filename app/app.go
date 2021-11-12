@@ -118,7 +118,6 @@ func (app *app) run() error {
 	var err error
 
 	defer func() {
-		fmt.Printf("\n\n\n")
 		app.logger.Infof("app stopped")
 		if err != nil {
 			app.logger.WithField("err", err).Errorf("app start fail")

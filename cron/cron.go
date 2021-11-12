@@ -75,7 +75,7 @@ func (c *Cron) Add(spec, name string, cmd func()) {
 		return
 	}
 
-	c.log.Info("add job success", "name", name, "spec", spec, "id", id)
+	c.log.Info("add job success", "name", name, "spec", spec, "entry", id)
 }
 
 func (c *Cron) Start() {
