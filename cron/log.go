@@ -1,8 +1,6 @@
 package cron
 
 import (
-	"fmt"
-
 	"github.com/go-sdk/lib/log"
 )
 
@@ -11,7 +9,6 @@ type logger struct {
 }
 
 func newLogger() *logger {
-	fmt.Println(log.DefaultLogger().GetLevel())
 	return &logger{l: log.DefaultLogger()}
 }
 
