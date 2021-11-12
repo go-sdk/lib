@@ -6,6 +6,8 @@
 
 ## Install
 
+- Only `Go 1.17+`
+
 ```shell
 go get -u github.com/go-sdk/lib
 ```
