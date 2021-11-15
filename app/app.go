@@ -38,7 +38,7 @@ func New(name string) *app {
 	a.ctx, a.cancel = context.WithCancel(context.Background())
 	a.eg, a.ctx = errgroup.WithContext(a.ctx)
 	a.logger = log.DefaultLogger()
-	a.logger.AttachFields(log.Fields{"app": name, "ver": VERSION})
+	a.logger.AttachFields(log.Fields{"app": name, "ver": VERSION, "hash": GITHASH})
 	return a
 }
 
