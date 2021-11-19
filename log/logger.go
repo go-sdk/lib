@@ -13,6 +13,9 @@ type Logger struct {
 
 	mu     sync.Mutex
 	fields Fields
+
+	skip     int
+	skipOnce sync.Once
 }
 
 func New() *Logger {
@@ -89,6 +92,10 @@ func (l *Logger) WithField(k string, v interface{}) *Entry {
 
 func (l *Logger) WithFields(kv Fields) *Entry {
 	return NewEntry(l).WithFields(kv)
+}
+
+func (l *Logger) Caller(skip ...int) *Entry {
+	return NewEntry(l).Caller(skip...)
 }
 
 func (l *Logger) AttachField(k string, v interface{}) {

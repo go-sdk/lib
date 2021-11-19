@@ -92,7 +92,7 @@ func (app *app) run() error {
 
 	defer func() { app.mu.Lock(); app.starting = false; app.mu.Unlock() }()
 
-	app.logger.WithFields(log.Fields{"ver": VERSION, "hash": GITHASH, "built": BUILT}).Infof("app start")
+	app.logger.WithFields(log.Fields{"ver": VERSION, "hash": GITHASH, "built": BUILT, "go": GOVERSION, "os": GOOS, "arch": GOARCH}).Infof("app start")
 
 	for i := 0; i < len(app.ss); i++ {
 		s := app.ss[i]

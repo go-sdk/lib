@@ -106,6 +106,10 @@ func WithFields(kv Fields) *Entry {
 	return logger.WithFields(kv)
 }
 
+func Caller(skip ...int) *Entry {
+	return logger.Caller(skip...)
+}
+
 func AttachField(k string, v interface{}) {
 	logger.AttachField(k, v)
 }
