@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-redis/redis/v8 v8.11.4
+	github.com/golang-jwt/jwt/v4 v4.1.0
 	github.com/imdario/mergo v0.3.12
 	github.com/json-iterator/go v1.1.12
 	github.com/robfig/cron/v3 v3.0.1

@@ -9,9 +9,7 @@ import (
 	"github.com/go-sdk/lib/conf"
 )
 
-var (
-	uuidEpoch = uint64(conf.Get("seq.uuid.epoch").Int64D(time.Date(2008, 9, 20, 16, 48, 0, 0, time.UTC).UnixNano() / 10))
-)
+var uuidEpoch = uint64(conf.Get("seq.uuid.epoch").Int64D(time.Date(2008, 9, 20, 16, 48, 0, 0, time.UTC).UnixNano() / 10))
 
 type UUID = uuid.UUID
 
