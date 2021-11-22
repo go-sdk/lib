@@ -1,2 +1,0 @@
-redis:
-  dsn: redis://localhost:6379
