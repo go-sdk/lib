@@ -27,3 +27,10 @@ func TestNew(t *testing.T) {
 
 	_ = a.Run()
 }
+
+func TestRecover(t *testing.T) {
+	a := New("test")
+	defer a.Recover()
+
+	panic("panic")
+}

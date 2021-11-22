@@ -20,7 +20,12 @@ func NewRedis(dsn string) Locker {
 	if err != nil {
 		panic(err)
 	}
-	return &redisLocker{c: redis.NewClient(opt)}
+	c := redis.NewClient(opt)
+	err = c.Ping(context.Background()).Err()
+	if err != nil {
+		panic(err)
+	}
+	return &redisLocker{c: c}
 }
 
 func (l *redisLocker) Lock(name string) bool {
