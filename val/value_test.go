@@ -1,7 +1,7 @@
 package val
 
 import (
-	"errors"
+	"fmt"
 	"testing"
 	"time"
 
@@ -79,7 +79,7 @@ func TestVal_String(t *testing.T) {
 		{v: "T", ev: "T"},
 		{v: []byte("Hello"), ev: "Hello"},
 		{v: n, ev: n.String()},
-		{v: errors.New("error"), ev: "error"},
+		{v: fmt.Errorf("error"), ev: "error"},
 	}
 
 	for i := 0; i < len(list); i++ {
@@ -129,7 +129,7 @@ func TestVal_SliceString(t *testing.T) {
 		{v: []interface{}{"1", "2"}, ev: []string{"1", "2"}},
 		{v: []bool{true, false}, ev: []string{"true", "false"}},
 		{v: []float64{12.34, 67.89}, ev: []string{"12.34", "67.89"}},
-		{v: []error{errors.New("1"), errors.New("2")}, ev: []string{"1", "2"}},
+		{v: []error{fmt.Errorf("1"), fmt.Errorf("2")}, ev: []string{"1", "2"}},
 		{v: "a b c", ev: []string{"a", "b", "c"}},
 	}
 

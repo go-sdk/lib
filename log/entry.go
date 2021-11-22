@@ -82,11 +82,15 @@ func (e *Entry) WithFields(kv Fields) *Entry {
 }
 
 func (e *Entry) Caller(skip ...int) *Entry {
-	caller := e.getCaller(skip...)
-	if caller != "" {
-		return e.WithField("caller", caller)
+	fs := Fields{}
+	f, l, fn := e.getCaller(skip...)
+	if f != "" {
+		fs["caller"] = f + ":" + strconv.Itoa(l)
 	}
-	return e
+	if fn != "" {
+		fs["func"] = fn
+	}
+	return e.WithFields(fs)
 }
 
 const (
@@ -94,7 +98,7 @@ const (
 	pkgName = "starudream/lib/log"
 )
 
-func (e *Entry) getCaller(skip ...int) string {
+func (e *Entry) getCaller(skip ...int) (string, int, string) {
 	e.l.skipOnce.Do(func() {
 		ls, le := 0, 0
 		for i := 1; i < maxSkip; i++ {
@@ -116,8 +120,8 @@ func (e *Entry) getCaller(skip ...int) string {
 	}
 	pc, f, l, ok := runtime.Caller(e.l.skip + skip[0])
 	if !ok {
-		return ""
+		return f, l, ""
 	}
 	fn := runtime.FuncForPC(pc).Name()
-	return f + ":" + strconv.Itoa(l) + " " + fn
+	return f, l, fn
 }

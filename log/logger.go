@@ -2,6 +2,7 @@ package log
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"sync"
 
@@ -141,4 +142,19 @@ func (l *Logger) SetFormatter(formatter Formatter) {
 
 func (l *Logger) SetOutput(output io.Writer) {
 	l.l.SetOutput(output)
+}
+
+func (l *Logger) SetExitFunc(f func(int)) {
+	l.l.ExitFunc = f
+}
+
+func ToError(i interface{}) error {
+	switch x := i.(type) {
+	case *logrus.Entry:
+		return fmt.Errorf(x.Message)
+	case error:
+		return x
+	default:
+		return nil
+	}
 }
