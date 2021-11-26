@@ -13,3 +13,6 @@ test:
 
 tidy:
 	$(GO) mod tidy
+
+lint:
+	golangci-lint run

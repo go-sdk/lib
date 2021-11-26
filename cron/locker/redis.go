@@ -30,7 +30,7 @@ func NewRedis(dsn string) Locker {
 
 func (l *redisLocker) Lock(name string) bool {
 	val, err := l.c.SetNX(context.Background(), redisPrefix+name, true, 30*time.Second).Result()
-	if l != nil && err != nil {
+	if l.l != nil && err != nil {
 		l.l.Error(err, "redis lock fail")
 	}
 	return val
@@ -38,7 +38,7 @@ func (l *redisLocker) Lock(name string) bool {
 
 func (l *redisLocker) Unlock(name string) {
 	err := l.c.Del(context.Background(), redisPrefix+name).Err()
-	if l != nil && err != nil {
+	if l.l != nil && err != nil {
 		l.l.Error(err, "redis unlock fail")
 	}
 }
