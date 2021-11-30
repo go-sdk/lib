@@ -1,4 +1,4 @@
-package maps
+package mapx
 
 type Map interface {
 	Put(key, value interface{}, ex ...bool)

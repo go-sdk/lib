@@ -1,0 +1,4 @@
+package stringx
+
+func C() {
+}
