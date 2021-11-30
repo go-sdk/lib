@@ -3,13 +3,17 @@ package app
 import (
 	"fmt"
 	"testing"
+	"time"
 
 	"github.com/go-sdk/lib/log"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
 	a := New("test")
 	defer a.Recover()
+
+	a.Add()
 
 	a.Add(
 		func() error {
@@ -26,6 +30,53 @@ func TestNew(t *testing.T) {
 	)
 
 	_ = a.Run()
+}
+
+func TestNewAddAfterRun(t *testing.T) {
+	a := New("test")
+	defer a.Recover()
+
+	a.Add(
+		func() error {
+			log.Info("1")
+			return nil
+		},
+	)
+
+	a.Start()
+
+	time.Sleep(50 * time.Millisecond)
+
+	a.Add(
+		func() error {
+			log.Info("2")
+			return nil
+		},
+	)
+
+	assert.Equal(t, 1, len(a.ss))
+
+	a.Stop()
+
+	time.Sleep(50 * time.Millisecond)
+}
+
+func TestNewRunAfterRun(t *testing.T) {
+	a := New("test")
+	defer a.Recover()
+
+	var e1, e2 error
+
+	go func() { e1 = a.Run() }()
+
+	time.Sleep(50 * time.Millisecond)
+
+	go func() { e2 = a.Run() }()
+
+	time.Sleep(50 * time.Millisecond)
+
+	assert.NoError(t, e1)
+	assert.Error(t, e2)
 }
 
 func TestRecover(t *testing.T) {
