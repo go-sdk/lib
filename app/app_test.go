@@ -61,24 +61,6 @@ func TestNewAddAfterRun(t *testing.T) {
 	time.Sleep(50 * time.Millisecond)
 }
 
-func TestNewRunAfterRun(t *testing.T) {
-	a := New("test")
-	defer a.Recover()
-
-	var e1, e2 error
-
-	go func() { e1 = a.Run() }()
-
-	time.Sleep(50 * time.Millisecond)
-
-	go func() { e2 = a.Run() }()
-
-	time.Sleep(50 * time.Millisecond)
-
-	assert.NoError(t, e1)
-	assert.Error(t, e2)
-}
-
 func TestRecover(t *testing.T) {
 	a := New("test")
 	defer a.Recover()
