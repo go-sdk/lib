@@ -3,6 +3,7 @@ package yaml
 import (
 	"fmt"
 
+	"github.com/go-sdk/lib/val"
 	"gopkg.in/yaml.v2"
 )
 
@@ -57,6 +58,10 @@ func UnmarshalFromString(s string, v interface{}, opts ...ConfigFunc) error {
 	return Unmarshal([]byte(s), v, opts...)
 }
 
+func Print(v interface{}) {
+	fmt.Println(MustMarshalToString(v))
+}
+
 func value(in interface{}) interface{} {
 	switch x := in.(type) {
 	case []interface{}:
@@ -74,7 +79,7 @@ func value(in interface{}) interface{} {
 	case map[interface{}]interface{}:
 		y := make(map[string]interface{})
 		for k, v := range x {
-			y[fmt.Sprintf("%v", k)] = value(v)
+			y[val.New(k).String()] = value(v)
 		}
 		return y
 	default:

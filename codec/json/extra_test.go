@@ -80,3 +80,11 @@ func TestPrettyS(t *testing.T) {
 func TestPrettyT(t *testing.T) {
 	assert.Equal(t, DataPrettyTRaw, PrettyT(Data))
 }
+
+func TestPrint(t *testing.T) {
+	Print(Data)
+}
+
+func TestPrintPretty(t *testing.T) {
+	PrintPretty(Data)
+}

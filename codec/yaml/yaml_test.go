@@ -56,3 +56,7 @@ func TestUnmarshalFromString(t *testing.T) {
 		assert.Equal(t, DataTiled, MustMarshalToString(v))
 	})
 }
+
+func TestPrint(t *testing.T) {
+	Print(Data)
+}

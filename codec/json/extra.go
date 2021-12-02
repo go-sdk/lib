@@ -1,5 +1,9 @@
 package json
 
+import (
+	"fmt"
+)
+
 const (
 	prefix      = ""
 	indentSpace = "  "
@@ -40,4 +44,12 @@ func PrettyS(v interface{}, l ...int) string {
 func PrettyT(v interface{}) string {
 	bs, _ := MarshalIndent(v, prefix, indentTab)
 	return string(bs)
+}
+
+func Print(v interface{}) {
+	fmt.Println(MustMarshalToString(v))
+}
+
+func PrintPretty(v interface{}) {
+	fmt.Println(PrettyS(v))
 }

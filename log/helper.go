@@ -1,7 +1,7 @@
 package log
 
 import (
-	"fmt"
+	"github.com/go-sdk/lib/val"
 )
 
 func ToFields(kv ...interface{}) Fields {
@@ -13,7 +13,7 @@ func ToFields(kv ...interface{}) Fields {
 	}
 	f := Fields{}
 	for i := 0; i < len(kv); i += 2 {
-		f[fmt.Sprintf("%v", kv[i])] = kv[i+1]
+		f[val.New(kv[i]).String()] = kv[i+1]
 	}
 	return f
 }
