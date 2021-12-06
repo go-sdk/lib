@@ -79,9 +79,13 @@ func (app *app) Run() error {
 	return app.run()
 }
 
+func (app *app) Once() error {
+	return app.run(true)
+}
+
 var signals = []os.Signal{syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGKILL, syscall.SIGINT}
 
-func (app *app) run() error {
+func (app *app) run(once ...bool) error {
 	app.mu.Lock()
 	if app.starting {
 		app.mu.Unlock()
@@ -99,19 +103,21 @@ func (app *app) run() error {
 		app.eg.Go(func() error { return s() })
 	}
 
-	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, signals...)
+	if len(once) == 0 || !once[0] {
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, signals...)
 
-	app.eg.Go(func() error {
-		for {
-			select {
-			case <-ch:
-				app.Stop()
-			case <-app.ctx.Done():
-				return app.ctx.Err()
+		app.eg.Go(func() error {
+			for {
+				select {
+				case <-ch:
+					app.Stop()
+				case <-app.ctx.Done():
+					return app.ctx.Err()
+				}
 			}
-		}
-	})
+		})
+	}
 
 	app.logger.Infof("app started")
 
