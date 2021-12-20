@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
-	"runtime"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/go-sdk/lib/internal/stack"
 	"github.com/go-sdk/lib/log"
 )
 
@@ -26,10 +26,6 @@ func Recovery() HandlerFunc {
 					}
 				}
 
-				const size = 64 << 10
-				buf := make([]byte, size)
-				buf = buf[:runtime.Stack(buf, false)]
-
 				httpRequest, _ := httputil.DumpRequest(c.Request, false)
 				headers := strings.Split(string(httpRequest), "\r\n")
 				for idx, header := range headers {
@@ -43,7 +39,7 @@ func Recovery() HandlerFunc {
 				if brokenPipe {
 					log.Errorf("%v\n%s", err, headersToStr)
 				} else {
-					log.Errorf("recover: %v\n%s%s", err, headersToStr, buf)
+					log.Errorf("recover: %v\n%s%s", err, headersToStr, stack.Stack())
 				}
 
 				if brokenPipe {

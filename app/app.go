@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
-	"runtime"
 	"sync"
 	"syscall"
 
 	"github.com/go-sdk/lib/internal/errgroup"
+	"github.com/go-sdk/lib/internal/stack"
 	"github.com/go-sdk/lib/log"
 )
 
@@ -43,14 +43,11 @@ func New(name string) *app {
 
 func (app *app) Recover() {
 	if r := recover(); r != nil {
-		const size = 64 << 10
-		buf := make([]byte, size)
-		buf = buf[:runtime.Stack(buf, false)]
 		err, ok := r.(error)
 		if !ok {
 			err = fmt.Errorf("%v", r)
 		}
-		app.logger.Errorf("recover: %v\n%s\n", err, string(buf))
+		app.logger.Errorf("recover: %v\n%s\n", err, stack.Stack())
 	}
 }
 
