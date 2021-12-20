@@ -3,8 +3,9 @@ package yaml
 import (
 	"fmt"
 
-	"github.com/go-sdk/lib/val"
 	"gopkg.in/yaml.v2"
+
+	"github.com/go-sdk/lib/val"
 )
 
 var (

@@ -5,8 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-sdk/lib/log"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/go-sdk/lib/log"
 )
 
 func TestNew(t *testing.T) {
