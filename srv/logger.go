@@ -1,6 +1,7 @@
 package srv
 
 import (
+	"strings"
 	"time"
 
 	"github.com/go-sdk/lib/log"
@@ -24,10 +25,10 @@ func Logger() HandlerFunc {
 		stop := time.Now()
 		status := c.Writer.Status()
 
-		fs["ip"] = c.ClientIP()
+		fs["ip"] = escape(c.ClientIP())
 		fs["host"] = request.Host
-		fs["referer"] = request.Referer()
-		fs["ua"] = request.UserAgent()
+		fs["referer"] = escape(request.Referer())
+		fs["ua"] = escape(request.UserAgent())
 		fs["status"] = status
 		fs["latency"] = stop.Sub(start).String()
 
@@ -46,4 +47,11 @@ func Logger() HandlerFunc {
 			l.Infof("%3d | %-7s %s", status, method, path)
 		}
 	}
+}
+
+func escape(s string) string {
+	s = strings.TrimSpace(s)
+	s = strings.ReplaceAll(s, "\n", "")
+	s = strings.ReplaceAll(s, "\r", "")
+	return s
 }
