@@ -15,4 +15,4 @@ tidy:
 	$(GO) mod tidy
 
 lint:
-	golangci-lint run
+	golangci-lint run --skip-dirs-use-default --skip-dirs internal/dateparse

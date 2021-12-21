@@ -158,7 +158,7 @@ func (conf *Config) err(err error, format string, args ...interface{}) error {
 	err = fmt.Errorf(format+", "+err.Error(), args...)
 
 	if conf.debug {
-		fmt.Println(time.Now().Format("2006-01-02T15:04:05.999Z07:00") + " [config] " + err.Error())
+		fmt.Println(time.Now().Format("2006-01-02T15:04:05.000Z07:00") + " [config] " + err.Error())
 	}
 
 	if conf.skipError {
