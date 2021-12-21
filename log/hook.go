@@ -9,7 +9,7 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-const timeFormatter = "2006-01-02T15:04:05.999Z07:00"
+const timeFormatter = "2006-01-02T15:04:05.000Z07:00"
 
 type (
 	Hook       = logrus.Hook
