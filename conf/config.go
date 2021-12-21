@@ -15,51 +15,51 @@ import (
 	"github.com/go-sdk/lib/val"
 )
 
-type Config struct {
+type Option struct {
 	debug     bool
 	skipError bool
 	overwrite bool
 }
 
-type ConfigFunc = func(config *Config)
+type OptionFunc = func(config *Option)
 
-func WithDebug() ConfigFunc {
-	return func(config *Config) {
+func WithDebug() OptionFunc {
+	return func(config *Option) {
 		config.debug = true
 	}
 }
 
-func WithSkipError() ConfigFunc {
-	return func(config *Config) {
+func WithSkipError() OptionFunc {
+	return func(config *Option) {
 		config.skipError = true
 	}
 }
 
-func WithOverwrite() ConfigFunc {
-	return func(config *Config) {
+func WithOverwrite() OptionFunc {
+	return func(config *Option) {
 		config.overwrite = true
 	}
 }
 
-type Conf struct {
-	*Config
+type Config struct {
+	*Option
 
 	data map[string]interface{}
 	env  map[string]string
 }
 
-func New(opts ...ConfigFunc) *Conf {
-	config := &Conf{
-		Config: &Config{},
+func New(opts ...OptionFunc) *Config {
+	conf := &Config{
+		Option: &Option{},
 		data:   map[string]interface{}{},
 		env:    map[string]string{},
 	}
 
 	for i := 0; i < len(opts); i++ {
-		opts[i](config.Config)
+		opts[i](conf.Option)
 	}
 
-	return config
+	return conf
 }
 
 // Load from files and env, env > files[n-1] > ... > files[0]
@@ -67,7 +67,7 @@ func Load(files ...string) error {
 	return New().Load(files...)
 }
 
-func (conf *Conf) Load(paths ...string) error {
+func (conf *Config) Load(paths ...string) error {
 	for i := 0; i < len(paths); i++ {
 		path, err := filepath.Abs(paths[i])
 		if err != nil {
@@ -106,7 +106,7 @@ func (conf *Conf) Load(paths ...string) error {
 	conf.loadEnv()
 
 	if conf.overwrite {
-		_conf = conf
+		config = conf
 	}
 
 	return nil
@@ -115,19 +115,19 @@ func (conf *Conf) Load(paths ...string) error {
 var (
 	defaultConfigPath = []string{"config.yaml", "config.yml", "config.json"}
 
-	_conf *Conf
+	config *Config
 )
 
 func init() {
-	_conf = New(WithSkipError())
-	_ = _conf.Load(defaultConfigPath...)
+	config = New(WithSkipError())
+	_ = config.Load(defaultConfigPath...)
 }
 
 func Get(key string) val.Value {
-	return _conf.Get(key)
+	return config.Get(key)
 }
 
-func (conf *Conf) Get(key string) val.Value {
+func (conf *Config) Get(key string) val.Value {
 	if v, ok := conf.env[key]; ok {
 		return val.New(v)
 	}
@@ -135,7 +135,7 @@ func (conf *Conf) Get(key string) val.Value {
 	return val.New(v)
 }
 
-func (conf *Conf) loadEnv() {
+func (conf *Config) loadEnv() {
 	es := os.Environ()
 	for i := 0; i < len(es); i++ {
 		ss := strings.SplitN(es[i], "=", 2)
@@ -150,7 +150,7 @@ func (conf *Conf) loadEnv() {
 	}
 }
 
-func (conf *Conf) err(err error, format string, args ...interface{}) error {
+func (conf *Config) err(err error, format string, args ...interface{}) error {
 	if err == nil {
 		return nil
 	}
