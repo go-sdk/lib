@@ -1,0 +1,3 @@
+db:
+  type: sqlite
+  dsn: file:sqlite?mode=memory&cache=shared

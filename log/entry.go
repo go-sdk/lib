@@ -70,15 +70,16 @@ func (e *Entry) Panicf(s string, v ...interface{}) {
 }
 
 func (e *Entry) WithContext(ctx context.Context) *Entry {
-	return &Entry{l: e.l, e: logrus.NewEntry(e.l.l).WithContext(ctx)}
+	return &Entry{l: e.l, e: e.e.Dup().WithContext(ctx)}
 }
 
 func (e *Entry) WithField(k string, v interface{}) *Entry {
-	return &Entry{l: e.l, e: logrus.NewEntry(e.l.l).WithField(k, v)}
+	x := &Entry{l: e.l, e: e.e.Dup().WithField(k, v)}
+	return x
 }
 
 func (e *Entry) WithFields(kv Fields) *Entry {
-	return &Entry{l: e.l, e: logrus.NewEntry(e.l.l).WithFields(kv)}
+	return &Entry{l: e.l, e: e.e.Dup().WithFields(kv)}
 }
 
 func (e *Entry) Caller(skip ...int) *Entry {

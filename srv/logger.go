@@ -10,6 +10,7 @@ import (
 func Logger() HandlerFunc {
 	return func(c *Context) {
 		fs := log.Fields{}
+		fs["span"] = "srv"
 
 		start := time.Now()
 

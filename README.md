@@ -27,6 +27,11 @@ go get -u github.com/go-sdk/lib
 - `log.file.local_time` `bool`
 - `log.file.compress` `bool`
 
+- `db.type` `mysql` or `postgres`
+- `db.dsn` `string`
+- `db.log.show_not_found_error` `bool`
+- `db.log.slow_threshold` `duration`
+
 - `seq.snowflake.epoch` `int` `13位`
 - `seq.snowflake.node` `int`
 - `seq.uuid.epoch` `int` `18位`
