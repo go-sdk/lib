@@ -23,6 +23,7 @@ type app struct {
 	eg     *errgroup.Group
 	ctx    context.Context
 	cancel context.CancelFunc
+	errCh  chan error
 	logger *log.Logger
 
 	ss []Services
@@ -36,6 +37,7 @@ func New(name string) *app {
 	a.mu = sync.Mutex{}
 	a.ctx, a.cancel = context.WithCancel(context.Background())
 	a.eg, a.ctx = errgroup.WithContext(a.ctx)
+	a.errCh = make(chan error, 1)
 	a.logger = log.DefaultLogger()
 	a.logger.AttachFields(log.Fields{"app": name, "ver": VERSION, "hash": GITHASH})
 	return a
@@ -96,8 +98,15 @@ func (app *app) run(once ...bool) error {
 
 	for i := 0; i < len(app.ss); i++ {
 		s := app.ss[i]
-		app.eg.Go(func() error { return s() })
+		app.eg.Go(func() error {
+			go func() {
+				app.errCh <- s()
+			}()
+			return nil
+		})
 	}
+
+	var err error
 
 	if len(once) == 0 || !once[0] {
 		ch := make(chan os.Signal, 1)
@@ -106,6 +115,10 @@ func (app *app) run(once ...bool) error {
 		app.eg.Go(func() error {
 			for {
 				select {
+				case err = <-app.errCh:
+					if err != nil {
+						app.Stop()
+					}
 				case <-ch:
 					app.Stop()
 				case <-app.ctx.Done():
@@ -116,8 +129,6 @@ func (app *app) run(once ...bool) error {
 	}
 
 	app.logger.Infof("app started")
-
-	var err error
 
 	defer func() {
 		app.logger.Infof("app stopped")

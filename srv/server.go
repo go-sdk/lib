@@ -12,6 +12,8 @@ type (
 	Engine  = gin.Engine
 	Context = gin.Context
 
+	RouterGroup = gin.RouterGroup
+
 	HandlerFunc = gin.HandlerFunc
 )
 
