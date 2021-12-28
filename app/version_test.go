@@ -13,3 +13,7 @@ func Test(t *testing.T) {
 func TestVersionInfo(t *testing.T) {
 	t.Log(VersionInfo())
 }
+
+func TestVersionInfoMap(t *testing.T) {
+	t.Log(VersionInfoMap())
+}

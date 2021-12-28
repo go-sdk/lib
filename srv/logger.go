@@ -7,8 +7,18 @@ import (
 	"github.com/go-sdk/lib/log"
 )
 
-func Logger() HandlerFunc {
+func Logger(skipPaths ...string) HandlerFunc {
+	skip := map[string]struct{}{}
+	for _, path := range skipPaths {
+		skip[path] = struct{}{}
+	}
+
 	return func(c *Context) {
+		if _, ok := skip[c.FullPath()]; ok {
+			c.Next()
+			return
+		}
+
 		fs := log.Fields{}
 		fs["span"] = "srv"
 

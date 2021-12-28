@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-sdk/lib/log"
 
 	"github.com/go-sdk/lib/conf"
 )
@@ -26,8 +27,16 @@ func New() *Engine {
 }
 
 func Default() *Engine {
-	e := gin.New()
+	e := New()
 	e.Use(Logger())
 	e.Use(Recovery())
 	return e
+}
+
+func PrintRoutes(e *Engine) {
+	routes := e.Routes()
+	for i := 0; i < len(routes); i++ {
+		route := routes[i]
+		log.Debugf("%-7s %-37s %s", route.Method, route.Path, route.Handler)
+	}
 }

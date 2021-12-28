@@ -18,3 +18,13 @@ func TestNewWithLogger(t *testing.T) {
 	handle(e, http.MethodPost, "/warn", Header{"Authorization": "XYZ"})
 	handle(e, http.MethodPost, "/panic", Header{"Authorization": "XYZ"})
 }
+
+func TestAddLoggerIgnoredPath(t *testing.T) {
+	e := New()
+	e.Use(Logger("/a", "/b/*any"), Recovery())
+	e.POST("/a", func(c *Context) { c.String(http.StatusOK, "ok") })
+	e.POST("/b/*any", func(c *Context) { c.String(http.StatusOK, "ok") })
+
+	handle(e, http.MethodPost, "/a?a=1", Header{})
+	handle(e, http.MethodPost, "/b/x?a=1", Header{})
+}
