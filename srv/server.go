@@ -1,6 +1,7 @@
 package srv
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -35,6 +36,7 @@ func Default() *Engine {
 
 func PrintRoutes(e *Engine) {
 	routes := e.Routes()
+	sort.Slice(routes, func(i, j int) bool { return routes[i].Path < routes[j].Path })
 	for i := 0; i < len(routes); i++ {
 		route := routes[i]
 		log.Debugf("%-7s %-37s %s", route.Method, route.Path, route.Handler)
