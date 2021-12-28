@@ -1,10 +1,12 @@
 package srv
 
 import (
-	"strings"
 	"time"
 
+	"github.com/go-sdk/lib/consts"
 	"github.com/go-sdk/lib/log"
+	"github.com/go-sdk/lib/seq"
+	"github.com/go-sdk/lib/token"
 )
 
 func Logger(skipPaths ...string) HandlerFunc {
@@ -36,12 +38,27 @@ func Logger(skipPaths ...string) HandlerFunc {
 		stop := time.Now()
 		status := c.Writer.Status()
 
-		fs["ip"] = escape(c.ClientIP())
+		fs["ip"] = c.ClientIP()
 		fs["host"] = request.Host
-		fs["referer"] = escape(request.Referer())
-		fs["ua"] = escape(request.UserAgent())
+		fs["referer"] = request.Referer()
+		fs["ua"] = request.UserAgent()
 		fs["status"] = status
 		fs["latency"] = stop.Sub(start).String()
+
+		if x, exist := c.Get(consts.CToken); exist {
+			if t, ok := x.(*token.Token); ok {
+				fs["iss"] = t.GetIssuer()
+				fs["uid"] = t.GetUserId()
+			}
+		}
+
+		tid := c.GetHeader(consts.TraceId)
+		if tid == "" {
+			tid = seq.NewUUID().String()
+			c.Header(consts.TraceId, tid)
+		}
+		c.Set(consts.CTraceId, tid)
+		fs["tid"] = tid
 
 		if len(c.Errors) > 0 {
 			fs["err"] = c.Errors.String()
@@ -58,11 +75,4 @@ func Logger(skipPaths ...string) HandlerFunc {
 			l.Infof("%3d | %-7s %s", status, method, path)
 		}
 	}
-}
-
-func escape(s string) string {
-	s = strings.TrimSpace(s)
-	s = strings.ReplaceAll(s, "\n", "")
-	s = strings.ReplaceAll(s, "\r", "")
-	return s
 }

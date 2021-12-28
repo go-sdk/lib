@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/go-sdk/lib/errx"
 	"github.com/go-sdk/lib/internal/stack"
 	"github.com/go-sdk/lib/log"
 )
@@ -44,10 +45,11 @@ func Recovery() HandlerFunc {
 
 				if brokenPipe {
 					_ = c.Error(err.(error))
-					c.Abort()
 				} else {
-					c.AbortWithStatus(http.StatusInternalServerError)
+					c.JSON(http.StatusOK, errx.InternalError("recover"))
 				}
+
+				c.Abort()
 			}
 		}()
 

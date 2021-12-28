@@ -8,23 +8,27 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/go-sdk/lib/codec/json"
+	"github.com/go-sdk/lib/consts"
 	"github.com/go-sdk/lib/seq"
 )
 
 func TestError(t *testing.T) {
-	t.Log(OK("biz_code", "biz_message"))
-	t.Log(BadRequest("biz_code", "biz_message"))
-	t.Log(Unauthorized("biz_code", "biz_message"))
-	t.Log(Forbidden("biz_code", "biz_message"))
-	t.Log(NotFound("biz_code", "biz_message"))
-	t.Log(Conflict("biz_code", "biz_message"))
-	t.Log(InternalError("biz_code", "biz_message"))
+	t.Log(OK(""))
+	t.Log(OK("biz_message"))
+	t.Log(OK("biz_message").WithCode("OK"))
+	t.Log(BadRequest("biz_message"))
+	t.Log(Unauthorized("biz_message"))
+	t.Log(Forbidden("biz_message"))
+	t.Log(NotFound("biz_message"))
+	t.Log(NotAllowed("biz_message"))
+	t.Log(Conflict("biz_message"))
+	t.Log(InternalError("biz_message"))
 }
 
 func TestError_WithContext(t *testing.T) {
 	id := seq.NewUUID().String()
 	ctx := NewContext(id)
-	e := OK("biz_code", "biz_message").WithContext(ctx)
+	e := OK("biz_message").WithContext(ctx)
 	t.Log(e)
 	assert.Equal(t, id, e.TraceId)
 	t.Log(json.PrettyT(e))
@@ -32,7 +36,7 @@ func TestError_WithContext(t *testing.T) {
 
 func NewContext(id string) *Context {
 	header := http.Header{}
-	header.Add(TraceId, id)
+	header.Add(consts.TraceId, id)
 	return &Context{
 		Request: &http.Request{Header: header},
 		Keys:    map[string]interface{}{},

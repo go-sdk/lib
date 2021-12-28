@@ -9,6 +9,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/go-sdk/lib/conf"
+	"github.com/go-sdk/lib/consts"
 	"github.com/go-sdk/lib/crypto"
 )
 
@@ -154,11 +155,13 @@ func Parse(s string) (*Token, error) {
 var ErrNotParsed = fmt.Errorf("token: not parsed")
 
 func FromContext(ctx context.Context) (*Token, error) {
-	t, ok := ctx.Value(tokenKey{}).(*Token)
-	if !ok || t.c == nil {
-		return nil, ErrNotParsed
+	if t, ok := ctx.Value(consts.CToken).(*Token); ok {
+		return t, nil
 	}
-	return t, nil
+	if t, ok := ctx.Value(tokenKey{}).(*Token); ok && t.c != nil {
+		return t, nil
+	}
+	return nil, ErrNotParsed
 }
 
 func MustFromContext(ctx context.Context) *Token {
