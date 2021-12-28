@@ -7,6 +7,8 @@ LDFLAGS += -X "github.com/go-sdk/lib/app.VERSION=$(VERSION)"
 LDFLAGS += -X "github.com/go-sdk/lib/app.GITHASH=$(GITHASH)"
 LDFLAGS += -X "github.com/go-sdk/lib/app.BUILT=$(shell date +%FT%T%z)"
 
+.PHONY: test tidy lint
+
 test:
 	@$(MAKE) tidy
 	CGO_ENABLED=1 $(GO) test -race -ldflags '$(LDFLAGS)' -count=1 -cover -covermode=atomic -coverprofile=coverage.out -v ./...

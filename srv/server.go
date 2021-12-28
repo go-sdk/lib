@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-sdk/lib/log"
 
 	"github.com/go-sdk/lib/conf"
+	"github.com/go-sdk/lib/log"
 )
 
 type (
