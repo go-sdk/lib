@@ -98,12 +98,11 @@ func (app *app) run(once ...bool) error {
 
 	for i := 0; i < len(app.ss); i++ {
 		s := app.ss[i]
-		app.eg.Go(func() error {
-			go func() {
-				app.errCh <- s()
-			}()
-			return nil
-		})
+		if len(once) == 0 || !once[0] {
+			go func() { app.errCh <- s() }()
+		} else {
+			app.eg.Go(func() error { return s() })
+		}
 	}
 
 	var err error
