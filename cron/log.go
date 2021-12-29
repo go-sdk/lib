@@ -5,21 +5,21 @@ import (
 )
 
 type logger struct {
-	l *log.Logger
+	e *log.Entry
 }
 
 func newLogger() *logger {
-	return &logger{l: log.DefaultLogger()}
+	return &logger{e: log.DefaultLogger().WithField("span", "cron")}
 }
 
 func (l *logger) Debug(msg string, keysAndValues ...interface{}) {
-	l.l.WithFields(log.ToFields(append(keysAndValues, "span", "cron")...)).Debug(msg)
+	l.e.WithFields(log.ToFields(keysAndValues...)).Debug(msg)
 }
 
 func (l *logger) Info(msg string, keysAndValues ...interface{}) {
-	l.l.WithFields(log.ToFields(append(keysAndValues, "span", "cron")...)).Info(msg)
+	l.e.WithFields(log.ToFields(keysAndValues...)).Info(msg)
 }
 
 func (l *logger) Error(err error, msg string, keysAndValues ...interface{}) {
-	l.l.WithFields(log.ToFields(append(keysAndValues, "err", err, "span", "cron")...)).Error(msg)
+	l.e.WithField("err", err).WithFields(log.ToFields(keysAndValues...)).Error(msg)
 }
