@@ -113,14 +113,18 @@ func (conf *Config) Load(paths ...string) error {
 }
 
 var (
-	defaultConfigPath = []string{"config.yaml", "config.yml", "config.json"}
+	defaultConfigPaths = []string{
+		"config.yaml", "config.yml", "config.json",
+		"../config.yaml", "../config.yml", "../config.json",
+		"../../config.yaml", "../../config.yml", "../../config.json",
+	}
 
 	config *Config
 )
 
 func init() {
 	config = New(WithSkipError())
-	_ = config.Load(defaultConfigPath...)
+	_ = config.Load(defaultConfigPaths...)
 }
 
 func Get(key string) val.Value {
