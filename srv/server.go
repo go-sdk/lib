@@ -1,7 +1,9 @@
 package srv
 
 import (
+	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -37,8 +39,21 @@ func Default() *Engine {
 func PrintRoutes(e *Engine) {
 	routes := e.Routes()
 	sort.Slice(routes, func(i, j int) bool { return routes[i].Path < routes[j].Path })
+
+	ml := 0
 	for i := 0; i < len(routes); i++ {
-		route := routes[i]
-		log.Debugf("%-7s %-37s %s", route.Method, route.Path, route.Handler)
+		l := len(routes[i].Path)
+		if l > ml {
+			ml = l
+		}
 	}
+	ml += 5
+
+	sb := strings.Builder{}
+	sb.WriteString("serving path list\n")
+	for i := 0; i < len(routes); i++ {
+		sb.WriteString(fmt.Sprintf("  %-7s %-"+strconv.Itoa(ml)+"s %s\n", routes[i].Method, routes[i].Path, routes[i].Handler))
+	}
+
+	log.Debug(sb.String())
 }
