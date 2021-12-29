@@ -2,13 +2,9 @@ package srv
 
 import (
 	"net/http"
-	"strings"
-
-	"github.com/gin-gonic/gin"
 
 	"github.com/go-sdk/lib/consts"
 	"github.com/go-sdk/lib/errx"
-	"github.com/go-sdk/lib/token"
 )
 
 func Auth(skipPaths ...string) HandlerFunc {
@@ -17,39 +13,22 @@ func Auth(skipPaths ...string) HandlerFunc {
 		skip[path] = struct{}{}
 	}
 
-	return func(c *gin.Context) {
+	return func(c *Context) {
 		if _, ok := skip[c.FullPath()]; ok {
 			c.Next()
 			return
 		}
 
-		s := c.GetString(consts.Authorization)
-		if s == "" {
-			s = c.GetHeader(consts.Authorization)
-			if s == "" {
-				s, _ = c.GetQuery(consts.Authorization)
-			}
-		}
-
-		if s == "" {
+		if _, ok := c.Get(consts.CTokenRaw); !ok {
 			c.JSON(http.StatusOK, errx.Unauthorized("missing "+consts.Authorization))
 			c.Abort()
 			return
 		}
 
-		ss := strings.Split(s, " ")
-		if len(ss) > 1 {
-			s = ss[len(ss)-1]
-		}
-
-		t, err := token.Parse(s)
-		if err != nil {
-			c.JSON(http.StatusOK, errx.Unauthorized(err.Error()))
+		if _, ok := c.Get(consts.CToken); !ok {
+			c.JSON(http.StatusOK, errx.Unauthorized("invalid "+consts.Authorization))
 			c.Abort()
 			return
 		}
-
-		c.Set(consts.CToken, t)
-		c.Set(consts.CTokenRaw, s)
 	}
 }

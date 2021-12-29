@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"github.com/sirupsen/logrus"
+
+	"github.com/go-sdk/lib/consts"
 )
 
 type Entry struct {
@@ -70,6 +72,9 @@ func (e *Entry) Panicf(s string, v ...interface{}) {
 }
 
 func (e *Entry) WithContext(ctx context.Context) *Entry {
+	if tid, ok := ctx.Value(consts.CTraceId).(string); ok {
+		return &Entry{l: e.l, e: e.e.Dup().WithContext(ctx).WithField("tid", tid)}
+	}
 	return &Entry{l: e.l, e: e.e.Dup().WithContext(ctx)}
 }
 

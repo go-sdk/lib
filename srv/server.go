@@ -9,7 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/go-sdk/lib/conf"
+	"github.com/go-sdk/lib/consts"
 	"github.com/go-sdk/lib/log"
+	"github.com/go-sdk/lib/seq"
+	"github.com/go-sdk/lib/token"
 )
 
 type (
@@ -26,7 +29,9 @@ func init() {
 }
 
 func New() *Engine {
-	return gin.New()
+	e := gin.New()
+	e.Use(Init())
+	return e
 }
 
 func Default() *Engine {
@@ -34,6 +39,37 @@ func Default() *Engine {
 	e.Use(Logger())
 	e.Use(Recovery())
 	return e
+}
+
+func Init() HandlerFunc {
+	return func(c *Context) {
+		// auth
+		s := c.GetHeader(consts.Authorization)
+		if s == "" {
+			s, _ = c.GetQuery(consts.Authorization)
+		}
+		if s != "" {
+			c.Set(consts.CTokenRaw, s)
+
+			ss := strings.Split(s, " ")
+			if len(ss) > 1 {
+				s = ss[len(ss)-1]
+			}
+
+			t, err := token.Parse(s)
+			if err == nil {
+				c.Set(consts.CToken, t)
+			}
+		}
+
+		// trace_id
+		tid := c.GetHeader(consts.TraceId)
+		if tid == "" {
+			tid = seq.NewUUID().String()
+			c.Header(consts.TraceId, tid)
+		}
+		c.Set(consts.CTraceId, tid)
+	}
 }
 
 func PrintRoutes(e *Engine) {

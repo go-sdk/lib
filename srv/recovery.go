@@ -7,15 +7,13 @@ import (
 	"os"
 	"strings"
 
-	"github.com/gin-gonic/gin"
-
 	"github.com/go-sdk/lib/errx"
 	"github.com/go-sdk/lib/internal/stack"
 	"github.com/go-sdk/lib/log"
 )
 
 func Recovery() HandlerFunc {
-	return func(c *gin.Context) {
+	return func(c *Context) {
 		defer func() {
 			if err := recover(); err != nil {
 				var brokenPipe bool

@@ -12,7 +12,7 @@ import (
 
 func TestNewWithAuth(t *testing.T) {
 	e := New()
-	e.Use(Auth(), Logger())
+	e.Use(Logger(), Auth())
 	e.POST("/", func(c *Context) { c.String(http.StatusOK, "ok") })
 
 	w1 := handle(e, http.MethodPost, "/", Header{})
