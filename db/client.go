@@ -10,6 +10,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 
 	"github.com/go-sdk/lib/conf"
 	"github.com/go-sdk/lib/log"
@@ -48,11 +49,15 @@ func New(typ, dsn string, def ...bool) (*gorm.DB, error) {
 	}
 
 	cfg := &gorm.Config{}
-	cfg.Logger = &gormLogger{
-		e:                 log.DefaultLogger().WithField("span", "db"),
-		ShowNotFoundError: conf.Get("db.log.show_not_found_error").Bool(),
-		SlowThreshold:     conf.Get("db.log.slow_threshold").DurationD(500 * time.Second),
-		LogLevel:          gormLogInfo,
+	cfg.Logger = logger.Discard
+	if !conf.Get("db.log.disable").Bool() {
+		cfg.Logger = &gormLogger{
+			e:                 log.DefaultLogger().WithField("span", "db"),
+			UseInfoSQL:        conf.Get("db.log.use_info_sql").Bool(),
+			ShowNotFoundError: conf.Get("db.log.show_not_found_error").Bool(),
+			SlowThreshold:     conf.Get("db.log.slow_threshold").DurationD(500 * time.Second),
+			LogLevel:          gormLogInfo,
+		}
 	}
 	cfg.DisableForeignKeyConstraintWhenMigrating = true
 	cfg.AllowGlobalUpdate = true

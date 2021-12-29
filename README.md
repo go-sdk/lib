@@ -29,6 +29,8 @@ go get -u github.com/go-sdk/lib
 
 - `db.type` `mysql` or `postgres`
 - `db.dsn` `string`
+- `db.log.disable` `bool`
+- `db.log.use_info_sql` `bool`
 - `db.log.show_not_found_error` `bool`
 - `db.log.slow_threshold` `duration`
 

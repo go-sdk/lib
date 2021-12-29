@@ -20,6 +20,7 @@ const (
 type gormLogger struct {
 	e *log.Entry
 
+	UseInfoSQL        bool
 	ShowNotFoundError bool
 	SlowThreshold     time.Duration
 	LogLevel          logger.LogLevel
@@ -69,6 +70,10 @@ func (l *gormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql 
 	case l.LogLevel >= gormLogWarn && l.SlowThreshold != 0 && elapsed > l.SlowThreshold:
 		x.Warnf("slow sql: %s", sql)
 	case l.LogLevel == gormLogInfo:
-		x.Info(sql)
+		if l.UseInfoSQL {
+			x.Info(sql)
+		} else {
+			x.Debug(sql)
+		}
 	}
 }
