@@ -33,6 +33,12 @@ func TestSlice(t *testing.T) {
 	assert.NoError(t, Set("string-slice-var", "3"))
 	assert.NoError(t, Set("float64-slice-var", "3"))
 
+	assert.NoError(t, Set("int-slice-var", "4"))
+	assert.NoError(t, Set("int64-slice-var", "4"))
+	assert.NoError(t, Set("string-slice-var", "4"))
+	assert.NoError(t, Set("float64-slice-var", "4"))
+
 	VisitAll(func(flag *Flag) { t.Logf("%s, val: %s, def: %s", flag.Name, flag.Value.String(), flag.DefValue) })
 
+	t.Logf("%#v %#v %#v %#v", x1, x2, x3, x4)
 }

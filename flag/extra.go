@@ -7,41 +7,39 @@ import (
 
 const sep = ","
 
+var overwrite = map[interface{}]struct{}{}
+
 // -- int slice Value
-type intSliceValue struct {
-	val []int
-	set bool
-}
+type intSliceValue []int
 
 func newIntSliceValue(val []int, p *[]int) *intSliceValue {
 	*p = val
-	return &intSliceValue{val: *p}
+	return (*intSliceValue)(p)
 }
 
 func (is *intSliceValue) Set(s string) error {
+	if _, ok := overwrite[is]; !ok {
+		overwrite[is] = struct{}{}
+		*is = []int{}
+	}
 	v, err := strconv.ParseInt(s, 10, 64)
-	if err != nil {
-		err = numError(err)
+	if err == nil {
+		*is = append(*is, int(v))
 	}
-	if !is.set {
-		is.set = true
-		(*is).val = []int{}
-	}
-	(*is).val = append((*is).val, int(v))
-	return err
+	return numError(err)
 }
 
 func (is *intSliceValue) Get() interface{} {
-	return (*is).val
+	return []int(*is)
 }
 
 func (is *intSliceValue) String() string {
 	sb := strings.Builder{}
-	for i := 0; i < len((*is).val); i++ {
+	for i := 0; i < len(*is); i++ {
 		if i > 0 {
 			sb.WriteString(sep)
 		}
-		sb.WriteString(strconv.FormatInt(int64((*is).val[i]), 10))
+		sb.WriteString(strconv.FormatInt(int64((*is)[i]), 10))
 	}
 	return sb.String()
 }
@@ -65,40 +63,36 @@ func IntSlice(name string, value []int, usage string) *[]int {
 }
 
 // -- int64 slice Value
-type int64SliceValue struct {
-	val []int64
-	set bool
-}
+type int64SliceValue []int64
 
 func newInt64SliceValue(val []int64, p *[]int64) *int64SliceValue {
 	*p = val
-	return &int64SliceValue{val: *p}
+	return (*int64SliceValue)(p)
 }
 
 func (is *int64SliceValue) Set(s string) error {
+	if _, ok := overwrite[is]; !ok {
+		overwrite[is] = struct{}{}
+		*is = []int64{}
+	}
 	v, err := strconv.ParseInt(s, 10, 64)
-	if err != nil {
-		err = numError(err)
+	if err == nil {
+		*is = append(*is, v)
 	}
-	if !is.set {
-		is.set = true
-		(*is).val = []int64{}
-	}
-	(*is).val = append((*is).val, v)
-	return err
+	return numError(err)
 }
 
 func (is *int64SliceValue) Get() interface{} {
-	return (*is).val
+	return []int64(*is)
 }
 
 func (is *int64SliceValue) String() string {
 	sb := strings.Builder{}
-	for i := 0; i < len((*is).val); i++ {
+	for i := 0; i < len(*is); i++ {
 		if i > 0 {
 			sb.WriteString(sep)
 		}
-		sb.WriteString(strconv.FormatInt((*is).val[i], 10))
+		sb.WriteString(strconv.FormatInt((*is)[i], 10))
 	}
 	return sb.String()
 }
@@ -122,36 +116,33 @@ func Int64Slice(name string, value []int64, usage string) *[]int64 {
 }
 
 // -- string slice Value
-type stringSliceValue struct {
-	val []string
-	set bool
-}
+type stringSliceValue []string
 
 func newStringSliceValue(val []string, p *[]string) *stringSliceValue {
 	*p = val
-	return &stringSliceValue{val: *p}
+	return (*stringSliceValue)(p)
 }
 
 func (ss *stringSliceValue) Set(val string) error {
-	if !ss.set {
-		ss.set = true
-		(*ss).val = []string{}
+	if _, ok := overwrite[ss]; !ok {
+		overwrite[ss] = struct{}{}
+		*ss = []string{}
 	}
-	(*ss).val = append((*ss).val, val)
+	*ss = append(*ss, val)
 	return nil
 }
 
 func (ss *stringSliceValue) Get() interface{} {
-	return (*ss).val
+	return []string(*ss)
 }
 
 func (ss *stringSliceValue) String() string {
 	sb := strings.Builder{}
-	for i := 0; i < len((*ss).val); i++ {
+	for i := 0; i < len(*ss); i++ {
 		if i > 0 {
 			sb.WriteString(sep)
 		}
-		sb.WriteString((*ss).val[i])
+		sb.WriteString((*ss)[i])
 	}
 	return sb.String()
 }
@@ -175,40 +166,36 @@ func StringSlice(name string, value []string, usage string) *[]string {
 }
 
 // -- float64 slice Value
-type float64SliceValue struct {
-	val []float64
-	set bool
-}
+type float64SliceValue []float64
 
 func newFloat64SliceValue(val []float64, p *[]float64) *float64SliceValue {
 	*p = val
-	return &float64SliceValue{val: *p}
+	return (*float64SliceValue)(p)
 }
 
 func (fs *float64SliceValue) Set(s string) error {
+	if _, ok := overwrite[fs]; !ok {
+		overwrite[fs] = struct{}{}
+		*fs = []float64{}
+	}
 	v, err := strconv.ParseFloat(s, 64)
-	if err != nil {
-		err = numError(err)
+	if err == nil {
+		*fs = append(*fs, v)
 	}
-	if !fs.set {
-		fs.set = true
-		(*fs).val = []float64{}
-	}
-	(*fs).val = append((*fs).val, v)
-	return err
+	return numError(err)
 }
 
 func (fs *float64SliceValue) Get() interface{} {
-	return (*fs).val
+	return []float64(*fs)
 }
 
 func (fs *float64SliceValue) String() string {
 	sb := strings.Builder{}
-	for i := 0; i < len((*fs).val); i++ {
+	for i := 0; i < len(*fs); i++ {
 		if i > 0 {
 			sb.WriteString(sep)
 		}
-		sb.WriteString(strconv.FormatFloat((*fs).val[i], 'f', -1, 64))
+		sb.WriteString(strconv.FormatFloat((*fs)[i], 'f', -1, 64))
 	}
 	return sb.String()
 }
