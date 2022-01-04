@@ -499,6 +499,12 @@ func UnquoteUsage(flag *Flag) (name string, usage string) {
 		name = "string"
 	case *uintValue, *uint64Value:
 		name = "uint"
+	case *intSliceValue, *int64SliceValue:
+		name = "int slice"
+	case *float64SliceValue:
+		name = "float slice"
+	case *stringSliceValue:
+		name = "string slice"
 	}
 	return
 }
