@@ -12,7 +12,10 @@ import (
 	"github.com/go-sdk/lib/log"
 )
 
-type Client = resty.Client
+type (
+	Client  = resty.Client
+	Request = resty.Request
+)
 
 var (
 	hdrUserAgentKey   = http.CanonicalHeaderKey("User-Agent")
@@ -34,7 +37,7 @@ func New(opts ...OptionFunc) *Client {
 	c.SetLogger(log.DefaultLogger())
 	c.SetDisableWarn(true)
 	c.SetDebug(o.debug)
-	c.OnBeforeRequest(func(_ *resty.Client, req *resty.Request) error {
+	c.OnBeforeRequest(func(_ *Client, req *Request) error {
 		if strings.TrimSpace(req.Header.Get(hdrUserAgentKey)) == "" {
 			if o.userAgent == "" {
 				req.Header.Set(hdrUserAgentKey, hdrUserAgentValue)
