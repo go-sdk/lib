@@ -31,9 +31,9 @@ type Config struct {
 
 type ConfigFunc = func(config *Config)
 
-func WithCleanup() ConfigFunc {
+func WithCleanup(t bool) ConfigFunc {
 	return func(config *Config) {
-		config.cleanup = true
+		config.cleanup = t
 	}
 }
 

@@ -51,7 +51,7 @@ func TestUnmarshalFromString(t *testing.T) {
 
 	t.Run("with cleanup", func(t *testing.T) {
 		var v interface{}
-		assert.NoError(t, UnmarshalFromString(DataRaw, &v, WithCleanup()))
+		assert.NoError(t, UnmarshalFromString(DataRaw, &v, WithCleanup(true)))
 		assert.NotContains(t, fmt.Sprintf("%#v", v), "map[interface {}]interface {}")
 		assert.Equal(t, DataTiled, MustMarshalToString(v))
 	})

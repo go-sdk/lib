@@ -9,7 +9,7 @@ import (
 )
 
 func TestNew(t *testing.T) {
-	resp, err := New(WithDebug(), WithUserAgent(" ")).R().EnableTrace().Get("https://api.github.com")
+	resp, err := New(WithDebug(true), WithUserAgent(" ")).R().EnableTrace().Get("https://api.github.com")
 	assert.NoError(t, err)
 
 	t.Log(spew.Sdump(resp.Request.TraceInfo()))

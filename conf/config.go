@@ -23,21 +23,21 @@ type Option struct {
 
 type OptionFunc = func(config *Option)
 
-func WithDebug() OptionFunc {
+func WithDebug(t bool) OptionFunc {
 	return func(config *Option) {
-		config.debug = true
+		config.debug = t
 	}
 }
 
-func WithSkipError() OptionFunc {
+func WithSkipError(t bool) OptionFunc {
 	return func(config *Option) {
-		config.skipError = true
+		config.skipError = t
 	}
 }
 
-func WithOverwrite() OptionFunc {
+func WithOverwrite(t bool) OptionFunc {
 	return func(config *Option) {
-		config.overwrite = true
+		config.overwrite = t
 	}
 }
 
@@ -83,7 +83,7 @@ func (conf *Config) Load(paths ...string) error {
 
 		switch strings.ToLower(filepath.Ext(path)) {
 		case ".yaml", ".yml":
-			err = yaml.Unmarshal(bs, &v, yaml.WithCleanup())
+			err = yaml.Unmarshal(bs, &v, yaml.WithCleanup(true))
 		case ".json":
 			err = json.Unmarshal(bs, &v)
 		}
@@ -123,7 +123,7 @@ var (
 )
 
 func init() {
-	config = New(WithSkipError())
+	config = New(WithSkipError(true))
 	_ = config.Load(defaultConfigPaths...)
 }
 

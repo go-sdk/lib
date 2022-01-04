@@ -55,9 +55,9 @@ type Option struct {
 
 type OptionFunc func(option *Option)
 
-func WithDebug() OptionFunc {
+func WithDebug(t bool) OptionFunc {
 	return func(option *Option) {
-		option.debug = true
+		option.debug = t
 	}
 }
 

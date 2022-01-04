@@ -27,20 +27,20 @@ func TestLoad(t *testing.T) {
 	})
 
 	t.Run("with debug", func(t *testing.T) {
-		assert.NoError(t, New(WithDebug()).Load(paths...))
+		assert.NoError(t, New(WithDebug(true)).Load(paths...))
 	})
 
 	t.Run("error", func(t *testing.T) {
-		assert.Error(t, New(WithDebug()).Load(errPaths...))
+		assert.Error(t, New(WithDebug(true)).Load(errPaths...))
 	})
 
 	t.Run("error with skip", func(t *testing.T) {
-		assert.NoError(t, New(WithSkipError()).Load(errPaths...))
+		assert.NoError(t, New(WithSkipError(true)).Load(errPaths...))
 	})
 }
 
 func TestGet(t *testing.T) {
-	assert.NoError(t, New(WithDebug(), WithOverwrite()).Load(testPaths...))
+	assert.NoError(t, New(WithDebug(true), WithOverwrite(true)).Load(testPaths...))
 	assert.Equal(t, int64(7890), Get("port").Int64())
 	assert.Equal(t, true, Get("allow-lan").Bool())
 	assert.Equal(t, false, Get("profile.store-selected").Bool())
