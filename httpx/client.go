@@ -13,8 +13,9 @@ import (
 )
 
 type (
-	Client  = resty.Client
-	Request = resty.Request
+	Client   = resty.Client
+	Request  = resty.Request
+	Response = resty.Response
 )
 
 var (
