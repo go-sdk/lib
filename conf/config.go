@@ -123,6 +123,12 @@ var (
 )
 
 func init() {
+	executable, _ := os.Executable()
+	dir := filepath.Dir(executable) + string(os.PathSeparator)
+	for i, s := range defaultConfigPaths {
+		defaultConfigPaths[i] = dir + s
+	}
+
 	config = New(WithSkipError(true))
 	_ = config.Load(defaultConfigPaths...)
 }
