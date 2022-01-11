@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/go-sdk/lib/testx"
 )
 
 func Test(t *testing.T) {
@@ -22,13 +22,13 @@ func TestNewSnowflakeIDWithTime(t *testing.T) {
 func TestNewSnowflakeIDFromString(t *testing.T) {
 	s := "1212040716089630720"
 	id, err := NewSnowflakeIDFromString(s)
-	assert.NoError(t, err)
-	assert.Equal(t, s, id.String())
+	testx.AssertNoError(t, err)
+	testx.AssertEqual(t, s, id.String())
 }
 
 func TestTimeFromSnowflakeIDString(t *testing.T) {
 	x := time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local)
-	assert.Equal(t, x.UTC(), TimeFromSnowflakeIDString(NewSnowflakeIDWithTime(x).String()).UTC())
+	testx.AssertEqual(t, x.UTC(), TimeFromSnowflakeIDString(NewSnowflakeIDWithTime(x).String()).UTC())
 }
 
 func BenchmarkNewSnowflakeID(b *testing.B) {

@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
 
 	"github.com/go-sdk/lib/crypto"
+	"github.com/go-sdk/lib/testx"
 	"github.com/go-sdk/lib/token"
 )
 
@@ -70,43 +70,43 @@ func userD(names ...string) *UserD {
 }
 
 func TestDefaultWithMeta(t *testing.T) {
-	assert.NoError(t, Default().AutoMigrate(&User{}))
+	testx.AssertNoError(t, Default().AutoMigrate(&User{}))
 
 	res := Default().Create(user())
-	assert.NoError(t, res.Error)
-	assert.Equal(t, int64(1), res.RowsAffected)
-	assert.NoError(t, Default().WithContext(ctx).Create(user()).Error)
-	assert.NoError(t, Default().Clauses(OnConflict{DoNothing: true}).Create(user("1")).Error)
-	assert.NoError(t, Default().Clauses(OnConflict{Columns: []Column{{Name: "id"}}, DoUpdates: Assignments(map[string]interface{}{"name": "user01"})}).Create(user("1")).Error)
+	testx.AssertNoError(t, res.Error)
+	testx.AssertEqual(t, int64(1), res.RowsAffected)
+	testx.AssertNoError(t, Default().WithContext(ctx).Create(user()).Error)
+	testx.AssertNoError(t, Default().Clauses(OnConflict{DoNothing: true}).Create(user("1")).Error)
+	testx.AssertNoError(t, Default().Clauses(OnConflict{Columns: []Column{{Name: "id"}}, DoUpdates: Assignments(map[string]interface{}{"name": "user01"})}).Create(user("1")).Error)
 
 	res = Default().First(&User{})
-	assert.NoError(t, res.Error)
-	assert.Equal(t, int64(1), res.RowsAffected)
-	assert.Equal(t, gorm.ErrRecordNotFound, Default().Take(&User{}, Eq{Column: "id", Value: "2"}).Error)
+	testx.AssertNoError(t, res.Error)
+	testx.AssertEqual(t, int64(1), res.RowsAffected)
+	testx.AssertEqual(t, gorm.ErrRecordNotFound, Default().Take(&User{}, Eq{Column: "id", Value: "2"}).Error)
 
-	assert.NoError(t, Default().WithContext(ctx).Model(&User{}).Where(Eq{Column: "id", Value: "1"}).Update("email", "user01@example.com").Error)
+	testx.AssertNoError(t, Default().WithContext(ctx).Model(&User{}).Where(Eq{Column: "id", Value: "1"}).Update("email", "user01@example.com").Error)
 
-	assert.NoError(t, Default().WithContext(ctx).Delete(&User{}, Eq{Column: "id", Value: "1"}).Error)
-	assert.NoError(t, Default().Unscoped().Find(&User{}).Error)
+	testx.AssertNoError(t, Default().WithContext(ctx).Delete(&User{}, Eq{Column: "id", Value: "1"}).Error)
+	testx.AssertNoError(t, Default().Unscoped().Find(&User{}).Error)
 }
 
 func TestDefaultWithMetaD(t *testing.T) {
-	assert.NoError(t, Default().AutoMigrate(&UserD{}))
+	testx.AssertNoError(t, Default().AutoMigrate(&UserD{}))
 
 	res := Default().Create(userD())
-	assert.NoError(t, res.Error)
-	assert.Equal(t, int64(1), res.RowsAffected)
-	assert.NoError(t, Default().WithContext(ctx).Create(userD()).Error)
-	assert.NoError(t, Default().Clauses(OnConflict{DoNothing: true}).Create(userD("1")).Error)
-	assert.NoError(t, Default().Clauses(OnConflict{Columns: []Column{{Name: "name"}, {Name: "deleted_at"}}, DoUpdates: Assignments(map[string]interface{}{"name": "user01"})}).Create(userD("1")).Error)
+	testx.AssertNoError(t, res.Error)
+	testx.AssertEqual(t, int64(1), res.RowsAffected)
+	testx.AssertNoError(t, Default().WithContext(ctx).Create(userD()).Error)
+	testx.AssertNoError(t, Default().Clauses(OnConflict{DoNothing: true}).Create(userD("1")).Error)
+	testx.AssertNoError(t, Default().Clauses(OnConflict{Columns: []Column{{Name: "name"}, {Name: "deleted_at"}}, DoUpdates: Assignments(map[string]interface{}{"name": "user01"})}).Create(userD("1")).Error)
 
 	res = Default().First(&UserD{})
-	assert.NoError(t, res.Error)
-	assert.Equal(t, int64(1), res.RowsAffected)
-	assert.Equal(t, gorm.ErrRecordNotFound, Default().Take(&UserD{}, Eq{Column: "id", Value: "2"}).Error)
+	testx.AssertNoError(t, res.Error)
+	testx.AssertEqual(t, int64(1), res.RowsAffected)
+	testx.AssertEqual(t, gorm.ErrRecordNotFound, Default().Take(&UserD{}, Eq{Column: "id", Value: "2"}).Error)
 
-	assert.NoError(t, Default().WithContext(ctx).Model(&UserD{}).Where(Eq{Column: "id", Value: "1"}).Update("email", "user01@example.com").Error)
+	testx.AssertNoError(t, Default().WithContext(ctx).Model(&UserD{}).Where(Eq{Column: "id", Value: "1"}).Update("email", "user01@example.com").Error)
 
-	assert.NoError(t, Default().WithContext(ctx).Delete(&UserD{}, Eq{Column: "id", Value: "1"}).Error)
-	assert.NoError(t, Default().Unscoped().Find(&UserD{}).Error)
+	testx.AssertNoError(t, Default().WithContext(ctx).Delete(&UserD{}, Eq{Column: "id", Value: "1"}).Error)
+	testx.AssertNoError(t, Default().Unscoped().Find(&UserD{}).Error)
 }

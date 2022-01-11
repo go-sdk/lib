@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/go-sdk/lib/testx"
 )
 
 type V struct {
@@ -27,8 +27,8 @@ func TestVal_Bool(t *testing.T) {
 		v := list[i]
 		y, e := New(v.v).BoolE()
 		t.Logf("%v %v", y, e)
-		assert.Equal(t, v.we, e != nil)
-		assert.Equal(t, v.ev, y)
+		testx.AssertEqual(t, v.we, e != nil)
+		testx.AssertEqual(t, v.ev, y)
 	}
 }
 
@@ -45,8 +45,8 @@ func TestVal_Int64(t *testing.T) {
 		v := list[i]
 		y, e := New(v.v).Int64E()
 		t.Logf("%v %v", y, e)
-		assert.Equal(t, v.we, e != nil)
-		assert.Equal(t, v.ev, y)
+		testx.AssertEqual(t, v.we, e != nil)
+		testx.AssertEqual(t, v.ev, y)
 	}
 }
 
@@ -63,8 +63,8 @@ func TestVal_Float64(t *testing.T) {
 		v := list[i]
 		y, e := New(v.v).Float64E()
 		t.Logf("%v %v", y, e)
-		assert.Equal(t, v.we, e != nil)
-		assert.Equal(t, v.ev, y)
+		testx.AssertEqual(t, v.we, e != nil)
+		testx.AssertEqual(t, v.ev, y)
 	}
 }
 
@@ -86,8 +86,8 @@ func TestVal_String(t *testing.T) {
 		v := list[i]
 		y, e := New(v.v).StringE()
 		t.Logf("%v %v", y, e)
-		assert.Equal(t, v.we, e != nil)
-		assert.Equal(t, v.ev, y)
+		testx.AssertEqual(t, v.we, e != nil)
+		testx.AssertEqual(t, v.ev, y)
 	}
 }
 
@@ -103,8 +103,8 @@ func TestVal_Duration(t *testing.T) {
 		v := list[i]
 		y, e := New(v.v).DurationE()
 		t.Logf("%v %v", y, e)
-		assert.Equal(t, v.we, e != nil)
-		assert.Equal(t, v.ev, y)
+		testx.AssertEqual(t, v.we, e != nil)
+		testx.AssertEqual(t, v.ev, y)
 	}
 }
 
@@ -118,8 +118,8 @@ func TestVal_Slice(t *testing.T) {
 		v := list[i]
 		y, e := New(v.v).SliceE()
 		t.Logf("%v %v", y, e)
-		assert.Equal(t, v.we, e != nil)
-		assert.Equal(t, v.ev, y)
+		testx.AssertEqual(t, v.we, e != nil)
+		testx.AssertEqual(t, v.ev, y)
 	}
 }
 
@@ -137,7 +137,7 @@ func TestVal_SliceString(t *testing.T) {
 		v := list[i]
 		y, e := New(v.v).SliceStringE()
 		t.Logf("%v %v", y, e)
-		assert.Equal(t, v.we, e != nil)
-		assert.Equal(t, v.ev, y)
+		testx.AssertEqual(t, v.we, e != nil)
+		testx.AssertEqual(t, v.ev, y)
 	}
 }
