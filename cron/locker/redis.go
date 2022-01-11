@@ -4,28 +4,20 @@ import (
 	"context"
 	"time"
 
-	"github.com/go-redis/redis/v8"
 	"github.com/robfig/cron/v3"
+
+	"github.com/go-sdk/lib/rdx"
 )
 
 const redisPrefix = "cron:locker:"
 
 type redisLocker struct {
-	c *redis.Client
+	c *rdx.Client
 	l cron.Logger
 }
 
-func NewRedis(dsn string) Locker {
-	opt, err := redis.ParseURL(dsn)
-	if err != nil {
-		panic(err)
-	}
-	c := redis.NewClient(opt)
-	err = c.Ping(context.Background()).Err()
-	if err != nil {
-		panic(err)
-	}
-	return &redisLocker{c: c}
+func NewRedis(cli *rdx.Client) Locker {
+	return &redisLocker{c: cli}
 }
 
 func (l *redisLocker) Lock(name string) bool {

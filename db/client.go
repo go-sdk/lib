@@ -16,9 +16,13 @@ import (
 	"github.com/go-sdk/lib/log"
 )
 
+type Client struct {
+	*gorm.DB
+}
+
 var (
 	mu sync.RWMutex
-	db *gorm.DB
+	db *Client
 )
 
 func init() {
@@ -34,7 +38,7 @@ func init() {
 	SetDefaultDB(x)
 }
 
-func New(typ, dsn string, def ...bool) (*gorm.DB, error) {
+func New(typ, dsn string, def ...bool) (*Client, error) {
 	var dial gorm.Dialector
 
 	switch typ {
@@ -64,10 +68,12 @@ func New(typ, dsn string, def ...bool) (*gorm.DB, error) {
 	cfg.QueryFields = true
 	cfg.CreateBatchSize = 100
 
-	x, err := gorm.Open(dial, cfg)
+	d, err := gorm.Open(dial, cfg)
 	if err != nil {
 		return nil, err
 	}
+
+	x := &Client{DB: d}
 
 	if len(def) == 0 || !def[0] {
 		return x, nil
@@ -78,13 +84,13 @@ func New(typ, dsn string, def ...bool) (*gorm.DB, error) {
 	return db, nil
 }
 
-func Default() *gorm.DB {
+func Default() *Client {
 	mu.RLock()
 	defer mu.RUnlock()
 	return db
 }
 
-func SetDefaultDB(x *gorm.DB) {
+func SetDefaultDB(x *Client) {
 	mu.Lock()
 	defer mu.Unlock()
 	db = x

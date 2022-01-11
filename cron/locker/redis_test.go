@@ -3,18 +3,17 @@ package locker
 import (
 	"testing"
 
-	"github.com/go-sdk/lib/conf"
+	"github.com/go-sdk/lib/rdx"
 	"github.com/go-sdk/lib/testx"
 )
 
 func TestNewRedis(t *testing.T) {
-	dsn := conf.Get("redis.dsn").String()
-	if dsn == "" {
+	if rdx.Default() == nil {
 		t.SkipNow()
 	}
 
-	l1 := NewRedis(dsn)
-	l2 := NewRedis(dsn)
+	l1 := NewRedis(rdx.Default())
+	l2 := NewRedis(rdx.Default())
 
 	name := "test"
 
