@@ -116,21 +116,25 @@ var (
 	defaultConfigPaths = []string{
 		"config.yaml", "config.yml", "config.json",
 		"../config.yaml", "../config.yml", "../config.json",
-		"../../config.yaml", "../../config.yml", "../../config.json",
 	}
 
 	config *Config
 )
 
-func init() {
-	executable, _ := os.Executable()
-	dir := filepath.Dir(executable) + string(os.PathSeparator)
-	for i, s := range defaultConfigPaths {
-		defaultConfigPaths[i] = dir + s
+func cps() (p []string) {
+	p = make([]string, len(defaultConfigPaths))
+	copy(p, defaultConfigPaths)
+	exec, _ := os.Executable()
+	execDir := filepath.Dir(exec) + string(os.PathSeparator)
+	for i := 0; i < len(defaultConfigPaths); i++ {
+		p = append(p, execDir+defaultConfigPaths[i])
 	}
+	return
+}
 
+func init() {
 	config = New(WithSkipError(true))
-	_ = config.Load(defaultConfigPaths...)
+	_ = config.Load(cps()...)
 }
 
 func Get(key string) val.Value {

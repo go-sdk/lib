@@ -10,5 +10,3 @@ gen
 *.dylib
 *.test
 *.out
-
-config.yaml
