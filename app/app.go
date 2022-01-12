@@ -132,15 +132,19 @@ func (app *app) run(once ...bool) error {
 	defer func() {
 		app.logger.Infof("app stopped")
 		if err != nil {
-			app.logger.WithField("err", err).Errorf("app start fail")
+			app.logger.Errorf("app start fail")
 		}
 	}()
 
-	err = app.eg.Wait()
+	ege := app.eg.Wait()
 
 	if err != nil {
-		if errors.Is(err, context.Canceled) {
-			err = nil
+		return err
+	}
+
+	if ege != nil {
+		if !errors.Is(ege, context.Canceled) {
+			err = ege
 		}
 		return err
 	}
