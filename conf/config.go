@@ -46,6 +46,7 @@ type Config struct {
 
 	data map[string]interface{}
 	env  map[string]string
+	args map[string]string
 }
 
 func New(opts ...OptionFunc) *Config {
@@ -53,6 +54,7 @@ func New(opts ...OptionFunc) *Config {
 		Option: &Option{},
 		data:   map[string]interface{}{},
 		env:    map[string]string{},
+		args:   map[string]string{},
 	}
 
 	for i := 0; i < len(opts); i++ {
@@ -104,6 +106,7 @@ func (conf *Config) Load(paths ...string) error {
 	}
 
 	conf.loadEnv()
+	conf.loadArg(os.Args[1:])
 
 	if conf.overwrite {
 		config = conf
@@ -119,6 +122,10 @@ var (
 	}
 
 	config *Config
+
+	envKeyFunc = func(key string) string {
+		return strings.ReplaceAll(strings.ToUpper(key), ".", "_")
+	}
 )
 
 func cps() (p []string) {
@@ -142,7 +149,10 @@ func Get(key string) val.Value {
 }
 
 func (conf *Config) Get(key string) val.Value {
-	if v, ok := conf.env[key]; ok {
+	if v, ok := conf.args[key]; ok {
+		return val.New(v)
+	}
+	if v, ok := conf.env[envKeyFunc(key)]; ok {
 		return val.New(v)
 	}
 	v := funk.Get(conf.data, key, funk.WithAllowZero())
@@ -161,6 +171,24 @@ func (conf *Config) loadEnv() {
 			continue
 		}
 		conf.env[k] = v
+	}
+}
+
+func (conf *Config) loadArg(args []string) {
+	for i := 0; i < len(args); i++ {
+		a := args[i]
+		if len(a) < 2 || a[0] != '-' || a[1] == '=' {
+			continue
+		}
+		name, value := a[1:], ""
+		if ss := strings.Split(name, "="); len(ss) == 2 {
+			name = ss[0]
+			value = ss[1]
+		} else if i < len(args)-1 {
+			i++
+			value = args[i]
+		}
+		conf.args[name] = value
 	}
 }
 

@@ -68,6 +68,7 @@
 package flag
 
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -313,7 +314,8 @@ type ErrorHandling int
 
 // These constants cause FlagSet.Parse to behave as described if the parse fails.
 const (
-	ContinueOnError ErrorHandling = iota // Return a descriptive error.
+	NothingOnError  ErrorHandling = iota // Do nothing
+	ContinueOnError                      // Return a descriptive error.
 	ExitOnError                          // Call os.Exit(2) or for -h/-help Exit(0).
 	PanicOnError                         // Call panic with a descriptive error.
 )
@@ -1016,6 +1018,7 @@ func (f *FlagSet) Parse(arguments []string) error {
 			break
 		}
 		switch f.errorHandling {
+		case NothingOnError:
 		case ContinueOnError:
 			return err
 		case ExitOnError:
@@ -1073,6 +1076,12 @@ func NewFlagSet(name string, errorHandling ErrorHandling) *FlagSet {
 		errorHandling: errorHandling,
 	}
 	f.Usage = f.defaultUsage
+	return f
+}
+
+func NewFlagSetWithBuffer(name string, errorHandling ErrorHandling) *FlagSet {
+	f := NewFlagSet(name, errorHandling)
+	f.output = &bytes.Buffer{}
 	return f
 }
 
