@@ -3,7 +3,7 @@ package flag
 import (
 	"testing"
 
-	"github.com/go-sdk/lib/testx"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestSlice(t *testing.T) {
@@ -23,20 +23,20 @@ func TestSlice(t *testing.T) {
 
 	VisitAll(func(flag *Flag) { t.Logf("%s, val: %s, def: %s", flag.Name, flag.Value.String(), flag.DefValue) })
 
-	testx.AssertNoError(t, Set("int-slice", "2"))
-	testx.AssertNoError(t, Set("int64-slice", "2"))
-	testx.AssertNoError(t, Set("string-slice", "2"))
-	testx.AssertNoError(t, Set("float64-slice", "2"))
+	assert.NoError(t, Set("int-slice", "2"))
+	assert.NoError(t, Set("int64-slice", "2"))
+	assert.NoError(t, Set("string-slice", "2"))
+	assert.NoError(t, Set("float64-slice", "2"))
 
-	testx.AssertNoError(t, Set("int-slice-var", "3"))
-	testx.AssertNoError(t, Set("int64-slice-var", "3"))
-	testx.AssertNoError(t, Set("string-slice-var", "3"))
-	testx.AssertNoError(t, Set("float64-slice-var", "3"))
+	assert.NoError(t, Set("int-slice-var", "3"))
+	assert.NoError(t, Set("int64-slice-var", "3"))
+	assert.NoError(t, Set("string-slice-var", "3"))
+	assert.NoError(t, Set("float64-slice-var", "3"))
 
-	testx.AssertNoError(t, Set("int-slice-var", "4"))
-	testx.AssertNoError(t, Set("int64-slice-var", "4"))
-	testx.AssertNoError(t, Set("string-slice-var", "4"))
-	testx.AssertNoError(t, Set("float64-slice-var", "4"))
+	assert.NoError(t, Set("int-slice-var", "4"))
+	assert.NoError(t, Set("int64-slice-var", "4"))
+	assert.NoError(t, Set("string-slice-var", "4"))
+	assert.NoError(t, Set("float64-slice-var", "4"))
 
 	VisitAll(func(flag *Flag) { t.Logf("%s, val: %s, def: %s", flag.Name, flag.Value.String(), flag.DefValue) })
 

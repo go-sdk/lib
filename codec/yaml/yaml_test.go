@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/go-sdk/lib/testx"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -35,25 +35,25 @@ foo:
 )
 
 func TestMustMarshal(t *testing.T) {
-	testx.AssertEqual(t, DataTiled, string(MustMarshal(Data)))
+	assert.Equal(t, DataTiled, string(MustMarshal(Data)))
 }
 
 func TestMustMarshalToString(t *testing.T) {
-	testx.AssertEqual(t, DataTiled, MustMarshalToString(Data))
+	assert.Equal(t, DataTiled, MustMarshalToString(Data))
 }
 
 func TestUnmarshalFromString(t *testing.T) {
 	t.Run("default", func(t *testing.T) {
 		var v interface{}
-		testx.AssertNoError(t, UnmarshalFromString(DataRaw, &v))
-		testx.AssertEqual(t, DataTiled, MustMarshalToString(v))
+		assert.NoError(t, UnmarshalFromString(DataRaw, &v))
+		assert.Equal(t, DataTiled, MustMarshalToString(v))
 	})
 
 	t.Run("with cleanup", func(t *testing.T) {
 		var v interface{}
-		testx.AssertNoError(t, UnmarshalFromString(DataRaw, &v, WithCleanup(true)))
-		testx.AssertNotContains(t, fmt.Sprintf("%#v", v), "map[interface {}]interface {}")
-		testx.AssertEqual(t, DataTiled, MustMarshalToString(v))
+		assert.NoError(t, UnmarshalFromString(DataRaw, &v, WithCleanup(true)))
+		assert.NotContains(t, fmt.Sprintf("%#v", v), "map[interface {}]interface {}")
+		assert.Equal(t, DataTiled, MustMarshalToString(v))
 	})
 }
 

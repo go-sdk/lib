@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-sdk/lib/testx"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewXID(t *testing.T) {
@@ -22,13 +22,13 @@ func TestNewXIDWithTime(t *testing.T) {
 func TestNewXIDFromString(t *testing.T) {
 	s := "71md606labs31jdhtarg"
 	id, err := NewXIDFromString(s)
-	testx.AssertNoError(t, err)
-	testx.AssertEqual(t, s, id.String())
+	assert.NoError(t, err)
+	assert.Equal(t, s, id.String())
 }
 
 func TestTimeFromXIDString(t *testing.T) {
 	x := time.Date(2020, 1, 1, 0, 0, 0, 0, time.Local)
-	testx.AssertEqual(t, x.UTC(), TimeFromXIDString(NewXIDWithTime(x).String()).UTC())
+	assert.Equal(t, x.UTC(), TimeFromXIDString(NewXIDWithTime(x).String()).UTC())
 }
 
 func BenchmarkNewXID(b *testing.B) {

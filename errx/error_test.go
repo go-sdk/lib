@@ -5,10 +5,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/go-sdk/lib/codec/json"
 	"github.com/go-sdk/lib/consts"
 	"github.com/go-sdk/lib/seq"
-	"github.com/go-sdk/lib/testx"
 )
 
 func TestError(t *testing.T) {
@@ -29,7 +30,7 @@ func TestError_WithContext(t *testing.T) {
 	ctx := NewContext(id)
 	e := OK("biz_message").WithContext(ctx)
 	t.Log(e)
-	testx.AssertEqual(t, id, e.TraceId)
+	assert.Equal(t, id, e.TraceId)
 	t.Log(json.PrettyT(e))
 }
 

@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/go-sdk/lib/testx"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewWithCORS(t *testing.T) {
@@ -14,7 +14,7 @@ func TestNewWithCORS(t *testing.T) {
 	e.POST("/", func(c *Context) { c.String(http.StatusOK, "ok") })
 
 	w := handle(e, http.MethodPost, "/", Header{"Origin": "www.google.com"})
-	testx.AssertEqual(t, http.StatusOK, w.Code)
+	assert.Equal(t, http.StatusOK, w.Code)
 }
 
 func TestNewWithCORSWithConfig(t *testing.T) {
@@ -28,8 +28,8 @@ func TestNewWithCORSWithConfig(t *testing.T) {
 	e.POST("/", func(c *Context) { c.String(http.StatusOK, "ok") })
 
 	w1 := handle(e, http.MethodPost, "/", Header{"Origin": "https://www.google.com"})
-	testx.AssertEqual(t, http.StatusForbidden, w1.Code)
+	assert.Equal(t, http.StatusForbidden, w1.Code)
 
 	w2 := handle(e, http.MethodPost, "/", Header{"Origin": "https://www.github.com"})
-	testx.AssertEqual(t, http.StatusOK, w2.Code)
+	assert.Equal(t, http.StatusOK, w2.Code)
 }

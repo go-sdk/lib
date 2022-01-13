@@ -5,8 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/go-sdk/lib/log"
-	"github.com/go-sdk/lib/testx"
 )
 
 func TestNew(t *testing.T) {
@@ -54,7 +55,7 @@ func TestNewAddAfterRun(t *testing.T) {
 		},
 	)
 
-	testx.AssertEqual(t, 1, len(a.ss))
+	assert.Equal(t, 1, len(a.ss))
 
 	a.Stop()
 

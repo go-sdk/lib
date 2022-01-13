@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/go-sdk/lib/testx"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewWithRecovery(t *testing.T) {
@@ -13,6 +13,6 @@ func TestNewWithRecovery(t *testing.T) {
 	e.POST("/", func(c *Context) { panic("...") })
 
 	w := handle(e, http.MethodPost, "/", Header{"Authorization": "XYZ"})
-	testx.AssertEqual(t, http.StatusOK, w.Code)
-	testx.AssertContains(t, w.Body.String(), "recover")
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Contains(t, w.Body.String(), "recover")
 }

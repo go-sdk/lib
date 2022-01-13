@@ -3,7 +3,7 @@ package json
 import (
 	"testing"
 
-	"github.com/go-sdk/lib/testx"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -59,26 +59,26 @@ var (
 )
 
 func TestMustMarshal(t *testing.T) {
-	testx.AssertEqual(t, DataRaw, string(MustMarshal(Data)))
+	assert.Equal(t, DataRaw, string(MustMarshal(Data)))
 }
 
 func TestMustMarshalToString(t *testing.T) {
-	testx.AssertEqual(t, DataRaw, MustMarshalToString(Data))
+	assert.Equal(t, DataRaw, MustMarshalToString(Data))
 }
 
 func TestUnmarshalFromString(t *testing.T) {
 	var v interface{}
-	testx.AssertNoError(t, UnmarshalFromString(DataRaw, &v))
-	testx.AssertEqual(t, DataRaw, MustMarshalToString(v))
+	assert.NoError(t, UnmarshalFromString(DataRaw, &v))
+	assert.Equal(t, DataRaw, MustMarshalToString(v))
 }
 
 func TestPrettyS(t *testing.T) {
-	testx.AssertEqual(t, DataPrettySRaw, PrettyS(Data))
-	testx.AssertEqual(t, DataPrettySRaw, PrettyS(Data, 2))
+	assert.Equal(t, DataPrettySRaw, PrettyS(Data))
+	assert.Equal(t, DataPrettySRaw, PrettyS(Data, 2))
 }
 
 func TestPrettyT(t *testing.T) {
-	testx.AssertEqual(t, DataPrettyTRaw, PrettyT(Data))
+	assert.Equal(t, DataPrettyTRaw, PrettyT(Data))
 }
 
 func TestPrint(t *testing.T) {

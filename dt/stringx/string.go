@@ -1,4 +1,1 @@
 package stringx
-
-func C() {
-}

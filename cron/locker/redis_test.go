@@ -3,8 +3,9 @@ package locker
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/go-sdk/lib/rdx"
-	"github.com/go-sdk/lib/testx"
 )
 
 func TestNewRedis(t *testing.T) {
@@ -22,8 +23,8 @@ func TestNewRedis(t *testing.T) {
 		l2.Unlock(name)
 	}()
 
-	testx.AssertEqual(t, true, l1.Lock(name))
-	testx.AssertEqual(t, false, l1.Lock(name))
+	assert.Equal(t, true, l1.Lock(name))
+	assert.Equal(t, false, l1.Lock(name))
 
-	testx.AssertEqual(t, false, l2.Lock(name))
+	assert.Equal(t, false, l2.Lock(name))
 }

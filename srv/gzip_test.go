@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/go-sdk/lib/testx"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNewWithGZIP(t *testing.T) {
@@ -13,6 +13,6 @@ func TestNewWithGZIP(t *testing.T) {
 	e.POST("/", func(c *Context) { c.String(http.StatusOK, "ok") })
 
 	w := handle(e, http.MethodPost, "/", Header{"Accept-Encoding": "gzip"})
-	testx.AssertEqual(t, http.StatusOK, w.Code)
-	testx.AssertEqual(t, "gzip", w.Header().Get("Content-Encoding"))
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, "gzip", w.Header().Get("Content-Encoding"))
 }
