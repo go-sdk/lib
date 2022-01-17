@@ -11,7 +11,7 @@ LDFLAGS += -X "github.com/go-sdk/lib/app.BUILT=$(shell date +%FT%T%z)"
 
 test:
 	@$(MAKE) tidy
-	CGO_ENABLED=1 $(GO) test -race -ldflags '$(LDFLAGS)' -count=1 -cover -covermode=atomic -coverprofile=coverage.out -v $(shell $(GO) list ./... | grep -v lib/flag | grep -v lib/cron/locker)
+	CGO_ENABLED=1 $(GO) test -race -ldflags '$(LDFLAGS)' -count=1 -cover -covermode=atomic -coverprofile=coverage.out -v $(shell $(GO) list ./... | grep -v lib/flag | grep -v lib/bot | grep -v lib/cron/locker)
 
 tidy:
 	$(GO) mod tidy
