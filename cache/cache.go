@@ -9,6 +9,7 @@ type Cache interface {
 	SetDefault(key string, value interface{}) error
 	Get(key string) (interface{}, bool, error)
 	GetExpiration(key string) (time.Time, error)
+	GetOrFetch(key string, fx func() (interface{}, time.Duration, error)) (interface{}, error)
 	Delete(keys ...string) error
 	Size() int
 	Flush()
