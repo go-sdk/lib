@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"runtime"
 	"strings"
+	"time"
 
 	"github.com/go-resty/resty/v2"
 
@@ -35,6 +36,7 @@ func New(opts ...OptionFunc) *Client {
 		opts[i](o)
 	}
 
+	c.SetTimeout(5 * time.Minute)
 	c.SetLogger(log.DefaultLogger())
 	c.SetDisableWarn(true)
 	c.SetDebug(o.debug)
@@ -50,6 +52,12 @@ func New(opts ...OptionFunc) *Client {
 	})
 
 	return c
+}
+
+var tc = New(WithDebug(true)).SetTimeout(time.Minute)
+
+func Test() *Client {
+	return tc
 }
 
 type Option struct {
