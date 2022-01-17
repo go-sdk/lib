@@ -112,6 +112,10 @@ func (c *MemoryCache) GetExpiration(key string) (time.Time, error) {
 	return t, nil
 }
 
+func (c *MemoryCache) GetOrFetch(key string, fx func() (interface{}, time.Duration, error)) (interface{}, error) {
+	return GetOrFetch(c, key, fx)
+}
+
 func (c *MemoryCache) Delete(keys ...string) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()

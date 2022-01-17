@@ -26,6 +26,16 @@ func TestNewMemoryCache(t *testing.T) {
 	t.Log(c1.GetExpiration("k1"))
 	t.Log(c1.Items())
 
+	v3, e3, _ := c1.Get("kx")
+	assert.Equal(t, nil, v3)
+	assert.Equal(t, false, e3)
+	vx, _ := c1.GetOrFetch("kx", func() (interface{}, time.Duration, error) { return "vx", time.Minute, nil })
+	v4, e4, _ := c1.Get("kx")
+	assert.Equal(t, "vx", v4)
+	assert.Equal(t, true, e4)
+	assert.Equal(t, "vx", vx)
+	_ = c1.Delete("kx")
+
 	_ = c1.Delete("k1")
 	assert.Equal(t, 1, c1.Size())
 	c1.DeleteExpired()

@@ -15,3 +15,15 @@ type Cache interface {
 }
 
 const DefaultExpiration time.Duration = 0
+
+func GetOrFetch(c Cache, key string, fx func() (interface{}, time.Duration, error)) (interface{}, error) {
+	v, ex, err := c.Get(key)
+	if ex || err != nil {
+		return v, err
+	}
+	x, d, err := fx()
+	if err != nil {
+		return nil, err
+	}
+	return x, c.Set(key, x, d)
+}

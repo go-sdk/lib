@@ -33,9 +33,16 @@ func (c *RedisCache) SetDefault(key string, value interface{}) error {
 func (c *RedisCache) Get(key string) (interface{}, bool, error) {
 	v, err := c.cli.Get(cb, key).Result()
 	if err != nil {
+		if err == rdx.ErrNil {
+			err = nil
+		}
 		return nil, false, err
 	}
 	return v, true, nil
+}
+
+func (c *RedisCache) GetOrFetch(key string, fx func() (interface{}, time.Duration, error)) (interface{}, error) {
+	return GetOrFetch(c, key, fx)
 }
 
 func (c *RedisCache) GetExpiration(key string) (time.Time, error) {
