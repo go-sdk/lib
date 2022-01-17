@@ -44,6 +44,8 @@ func WithOverwrite(t bool) OptionFunc {
 type Config struct {
 	*Option
 
+	files []string
+
 	data map[string]interface{}
 	env  map[string]string
 	args map[string]string
@@ -52,6 +54,7 @@ type Config struct {
 func New(opts ...OptionFunc) *Config {
 	conf := &Config{
 		Option: &Option{},
+		files:  []string{},
 		data:   map[string]interface{}{},
 		env:    map[string]string{},
 		args:   map[string]string{},
@@ -77,8 +80,11 @@ func (conf *Config) Load(paths ...string) error {
 		}
 
 		bs, err := os.ReadFile(path)
-		if err := conf.err(err, "read config file (%s) fail", path); err != nil {
-			return err
+		if err != nil {
+			if x := conf.log(err, "read config file (%s) fail", path); x != nil {
+				return x
+			}
+			continue
 		}
 
 		var v interface{}
@@ -90,19 +96,23 @@ func (conf *Config) Load(paths ...string) error {
 			err = json.Unmarshal(bs, &v)
 		}
 
-		if err := conf.err(err, "parse config file (%s) fail", path); err != nil {
-			return err
-		}
-
 		if err != nil {
+			if x := conf.log(err, "parse config file (%s) fail", path); x != nil {
+				return x
+			}
 			continue
 		}
 
 		err = mergo.Merge(&conf.data, v, mergo.WithOverride, mergo.WithSliceDeepCopy)
 
-		if err := conf.err(err, "merge config file (%s) fail", path); err != nil {
-			return err
+		if err != nil {
+			if x := conf.log(err, "merge config file (%s) fail", path); x != nil {
+				return x
+			}
+			continue
 		}
+
+		conf.files = append(conf.files, path)
 	}
 
 	conf.loadEnv()
@@ -118,8 +128,9 @@ func (conf *Config) Load(paths ...string) error {
 var (
 	defaultConfigPaths = []string{
 		"config.yaml", "config.yml", "config.json",
-		"../config.yaml", "../config.yml", "../config.json",
 	}
+
+	depth = 2
 
 	config *Config
 
@@ -131,10 +142,19 @@ var (
 func cps() (p []string) {
 	p = make([]string, len(defaultConfigPaths))
 	copy(p, defaultConfigPaths)
+	for i := 1; i <= depth; i++ {
+		prefix := ""
+		for j := 1; j <= i; j++ {
+			prefix += "../"
+		}
+		for k := 0; k < len(defaultConfigPaths); k++ {
+			p = append(p, prefix+defaultConfigPaths[k])
+		}
+	}
 	exec, _ := os.Executable()
 	execDir := filepath.Dir(exec) + string(os.PathSeparator)
-	for i := 0; i < len(defaultConfigPaths); i++ {
-		p = append(p, execDir+defaultConfigPaths[i])
+	for i, l := 0, len(p); i < l; i++ {
+		p = append(p, execDir+p[i])
 	}
 	return
 }
@@ -148,6 +168,10 @@ func Get(key string) val.Value {
 	return config.Get(key)
 }
 
+func Files() []string {
+	return config.Files()
+}
+
 func (conf *Config) Get(key string) val.Value {
 	if v, ok := conf.args[key]; ok {
 		return val.New(v)
@@ -157,6 +181,10 @@ func (conf *Config) Get(key string) val.Value {
 	}
 	v := funk.Get(conf.data, key, funk.WithAllowZero())
 	return val.New(v)
+}
+
+func (conf *Config) Files() []string {
+	return conf.files
 }
 
 func (conf *Config) loadEnv() {
@@ -192,7 +220,7 @@ func (conf *Config) loadArg(args []string) {
 	}
 }
 
-func (conf *Config) err(err error, format string, args ...interface{}) error {
+func (conf *Config) log(err error, format string, args ...interface{}) error {
 	if err == nil {
 		return nil
 	}
