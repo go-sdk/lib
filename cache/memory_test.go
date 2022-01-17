@@ -29,7 +29,7 @@ func TestNewMemoryCache(t *testing.T) {
 	v3, e3, _ := c1.Get("kx")
 	assert.Equal(t, nil, v3)
 	assert.Equal(t, false, e3)
-	vx, _ := c1.GetOrFetch("kx", func() (interface{}, time.Duration, error) { return "vx", time.Minute, nil })
+	vx, _ := c1.GetOrFetch("kx", func() (interface{}, time.Duration, error) { return "vx", time.Minute, nil }, func(v interface{}) (interface{}, error) { return v, nil })
 	v4, e4, _ := c1.Get("kx")
 	assert.Equal(t, "vx", v4)
 	assert.Equal(t, true, e4)

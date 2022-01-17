@@ -34,7 +34,7 @@ func TestNewRedisCache(t *testing.T) {
 	v3, e3, _ := c1.Get("kx")
 	assert.Equal(t, nil, v3)
 	assert.Equal(t, false, e3)
-	vx, err := c1.GetOrFetch("kx", func() (interface{}, time.Duration, error) { return "vx", time.Minute, nil })
+	vx, err := c1.GetOrFetch("kx", func() (interface{}, time.Duration, error) { return "vx", time.Minute, nil }, func(v interface{}) (interface{}, error) { return v, nil })
 	assert.NoError(t, err)
 	v4, e4, _ := c1.Get("kx")
 	assert.Equal(t, "vx", v4)

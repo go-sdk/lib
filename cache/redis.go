@@ -41,8 +41,8 @@ func (c *RedisCache) Get(key string) (interface{}, bool, error) {
 	return v, true, nil
 }
 
-func (c *RedisCache) GetOrFetch(key string, fx func() (interface{}, time.Duration, error)) (interface{}, error) {
-	return GetOrFetch(c, key, fx)
+func (c *RedisCache) GetOrFetch(key string, fx func() (interface{}, time.Duration, error), fv func(v interface{}) (interface{}, error)) (interface{}, error) {
+	return GetOrFetch(c, key, fx, fv)
 }
 
 func (c *RedisCache) GetExpiration(key string) (time.Time, error) {

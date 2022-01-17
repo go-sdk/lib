@@ -112,8 +112,8 @@ func (c *MemoryCache) GetExpiration(key string) (time.Time, error) {
 	return t, nil
 }
 
-func (c *MemoryCache) GetOrFetch(key string, fx func() (interface{}, time.Duration, error)) (interface{}, error) {
-	return GetOrFetch(c, key, fx)
+func (c *MemoryCache) GetOrFetch(key string, fx func() (interface{}, time.Duration, error), fv func(v interface{}) (interface{}, error)) (interface{}, error) {
+	return GetOrFetch(c, key, fx, fv)
 }
 
 func (c *MemoryCache) Delete(keys ...string) error {
