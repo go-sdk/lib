@@ -32,6 +32,12 @@ func UnmarshalFromString(s string, v interface{}) error {
 	return Unmarshal([]byte(s), v)
 }
 
+func UnmarshalToMap(s string) map[string]interface{} {
+	var v map[string]interface{}
+	_ = UnmarshalFromString(s, &v)
+	return v
+}
+
 func PrettyS(v interface{}, l ...int) string {
 	indent := indentSpace
 	if len(l) > 0 && l[0] >= 1 && l[0] <= 4 {
