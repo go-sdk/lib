@@ -1,5 +1,33 @@
 # Changelog
 
+### [0.0.10](https://github.com/go-sdk/lib/compare/v0.0.9...v0.0.10) (2022-01-18)
+
+
+### Features
+
+* add actions golang test for all branch pull request ([c556e43](https://github.com/go-sdk/lib/commit/c556e432b5f36ea95262bfe9e6f06e1e9eea85d2))
+* add actions golang test for all branch push ([f5ed60c](https://github.com/go-sdk/lib/commit/f5ed60c1843f27ff88b2ce8e1f54acf6bc0ad238))
+* add codecov config yaml ([8fe1ec1](https://github.com/go-sdk/lib/commit/8fe1ec1f15ce2afbf3fd070e6d2755d0516efe06))
+* add dependabot ([badaadc](https://github.com/go-sdk/lib/commit/badaadc7fd6046990e59d08ef362203039f3809e))
+* add pool ([dd365fa](https://github.com/go-sdk/lib/commit/dd365fa174744336f5cacd34f8585903a875f00e))
+* add SECURITY.md ([7ec487d](https://github.com/go-sdk/lib/commit/7ec487d51b47f324dcf4ddb6bd5c8efa12074494))
+* export errgroup ([95a9332](https://github.com/go-sdk/lib/commit/95a93327729308b671f6df624489ca8e226bb7b7))
+* set release please fork to true ([a0a65e0](https://github.com/go-sdk/lib/commit/a0a65e01ff57019622bd2c6b3b039c6ca68ce2fb))
+
+
+### Bug Fixes
+
+* change action to master ([390cc36](https://github.com/go-sdk/lib/commit/390cc365ba45cf235de893f613905177f6720417))
+* fix default branch dev to master ([1c9f606](https://github.com/go-sdk/lib/commit/1c9f606bfc903164b0f52815600a2ae57e30cac4))
+* remove actions for other branch ([92a0f30](https://github.com/go-sdk/lib/commit/92a0f306ad99fe73776ce41c4743e1622190ef6c))
+* remove windows and macos golang test ([1b00812](https://github.com/go-sdk/lib/commit/1b0081202623b9e03b9edc31d13929fe42a24736))
+
+
+### Performance Improvements
+
+* let's release please skip actions ([219f711](https://github.com/go-sdk/lib/commit/219f71117c33787282d1e4b593e7e6eb777a7b05))
+* simple code ([ad9b9f4](https://github.com/go-sdk/lib/commit/ad9b9f4519e4264e0a0d6d793106f2189b5610d6))
+
 ### [0.0.9](https://github.com/go-sdk/lib/compare/v0.0.8...v0.0.9) (2022-01-18)
 
 
