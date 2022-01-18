@@ -1,5 +1,12 @@
 # Changelog
 
+### [0.0.11](https://github.com/go-sdk/lib/compare/v0.0.10...v0.0.11) (2022-01-18)
+
+
+### Bug Fixes
+
+* remove skip actions ([0854274](https://github.com/go-sdk/lib/commit/0854274de1e53f474d911fef55cdec282fd1b651))
+
 ### [0.0.10](https://github.com/go-sdk/lib/compare/v0.0.9...v0.0.10) (2022-01-18)
 
 
