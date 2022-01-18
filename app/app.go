@@ -9,7 +9,7 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/go-sdk/lib/internal/errgroup"
+	"github.com/go-sdk/lib/errgroup"
 	"github.com/go-sdk/lib/internal/stack"
 	"github.com/go-sdk/lib/log"
 )
