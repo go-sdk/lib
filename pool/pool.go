@@ -59,22 +59,20 @@ func (p *Pool) Run(n ...int) error {
 	for i := 0; i < n[0]; i++ {
 		go func() {
 			for {
-				select {
-				case task, ok := <-taskChan:
-					if !ok {
+				task, ok := <-taskChan
+				if !ok {
+					return
+				}
+
+				func() {
+					defer func() { p.error(recover()); p.wg.Done() }()
+
+					if atomic.LoadInt32(&p.errSig) != 0 {
 						return
 					}
 
-					func() {
-						defer func() { p.error(recover()); p.wg.Done() }()
-
-						if atomic.LoadInt32(&p.errSig) != 0 {
-							return
-						}
-
-						p.error(task(p.ctx))
-					}()
-				}
+					p.error(task(p.ctx))
+				}()
 			}
 		}()
 	}
