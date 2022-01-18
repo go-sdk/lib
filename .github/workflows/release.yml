@@ -13,7 +13,6 @@ jobs:
       - name: Release
         uses: GoogleCloudPlatform/release-please-action@v3
         with:
-          fork: true
           release-type: go
           bump-minor-pre-major: true
           bump-patch-for-minor-pre-major: true
