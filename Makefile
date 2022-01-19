@@ -14,7 +14,7 @@ test:
 	CGO_ENABLED=1 $(GO) test -race -ldflags '$(LDFLAGS)' -count=1 -cover -covermode=atomic -coverprofile=coverage.out -v $(shell $(GO) list ./... | grep -v lib/flag | grep -v lib/bot | grep -v lib/cron/locker)
 
 tidy:
-	$(GO) mod tidy
+	$(GO) mod tidy -go=1.16 && $(GO) mod tidy -go=1.17
 
 lint:
 	golangci-lint run --skip-dirs-use-default --skip-dirs internal/dateparse
