@@ -13,10 +13,10 @@ func TestNewWithLogger(t *testing.T) {
 	e.POST("/warn", func(c *Context) { c.AbortWithStatus(http.StatusBadRequest) })
 	e.POST("/panic", func(c *Context) { panic("...") })
 
-	handle(e, http.MethodPost, "/", Header{"Authorization": "XYZ"})
-	handle(e, http.MethodPost, "/err", Header{"Authorization": "XYZ"})
-	handle(e, http.MethodPost, "/warn", Header{"Authorization": "XYZ"})
-	handle(e, http.MethodPost, "/panic", Header{"Authorization": "XYZ"})
+	TestHandle(e, http.MethodPost, "/", map[string]string{"Authorization": "XYZ"})
+	TestHandle(e, http.MethodPost, "/err", map[string]string{"Authorization": "XYZ"})
+	TestHandle(e, http.MethodPost, "/warn", map[string]string{"Authorization": "XYZ"})
+	TestHandle(e, http.MethodPost, "/panic", map[string]string{"Authorization": "XYZ"})
 }
 
 func TestAddLoggerIgnoredPath(t *testing.T) {
@@ -25,6 +25,6 @@ func TestAddLoggerIgnoredPath(t *testing.T) {
 	e.POST("/a", func(c *Context) { c.String(http.StatusOK, "ok") })
 	e.POST("/b/*any", func(c *Context) { c.String(http.StatusOK, "ok") })
 
-	handle(e, http.MethodPost, "/a?a=1", Header{})
-	handle(e, http.MethodPost, "/b/x?a=1", Header{})
+	TestHandle(e, http.MethodPost, "/a?a=1", nil)
+	TestHandle(e, http.MethodPost, "/b/x?a=1", nil)
 }

@@ -12,7 +12,7 @@ func TestNewWithRecovery(t *testing.T) {
 	e.Use(Recovery())
 	e.POST("/", func(c *Context) { panic("...") })
 
-	w := handle(e, http.MethodPost, "/", Header{"Authorization": "XYZ"})
+	w := TestHandle(e, http.MethodPost, "/", map[string]string{"Authorization": "XYZ"})
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Contains(t, w.Body.String(), "recover")
 }

@@ -12,7 +12,7 @@ func TestNewWithGZIP(t *testing.T) {
 	e.Use(GZIP())
 	e.POST("/", func(c *Context) { c.String(http.StatusOK, "ok") })
 
-	w := handle(e, http.MethodPost, "/", Header{"Accept-Encoding": "gzip"})
+	w := TestHandle(e, http.MethodPost, "/", map[string]string{"Accept-Encoding": "gzip"})
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, "gzip", w.Header().Get("Content-Encoding"))
 }

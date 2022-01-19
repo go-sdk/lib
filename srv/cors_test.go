@@ -13,7 +13,7 @@ func TestNewWithCORS(t *testing.T) {
 	e.Use(CORS())
 	e.POST("/", func(c *Context) { c.String(http.StatusOK, "ok") })
 
-	w := handle(e, http.MethodPost, "/", Header{"Origin": "www.google.com"})
+	w := TestHandle(e, http.MethodPost, "/", map[string]string{"Origin": "www.google.com"})
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
@@ -27,9 +27,9 @@ func TestNewWithCORSWithConfig(t *testing.T) {
 	}))
 	e.POST("/", func(c *Context) { c.String(http.StatusOK, "ok") })
 
-	w1 := handle(e, http.MethodPost, "/", Header{"Origin": "https://www.google.com"})
+	w1 := TestHandle(e, http.MethodPost, "/", map[string]string{"Origin": "https://www.google.com"})
 	assert.Equal(t, http.StatusForbidden, w1.Code)
 
-	w2 := handle(e, http.MethodPost, "/", Header{"Origin": "https://www.github.com"})
+	w2 := TestHandle(e, http.MethodPost, "/", map[string]string{"Origin": "https://www.github.com"})
 	assert.Equal(t, http.StatusOK, w2.Code)
 }
