@@ -12,8 +12,7 @@ func init() {
 	cl, err := ParseLevel(conf.Get("log.console.level").String())
 	if err == nil {
 		h := NewConsoleHook(&ConsoleHookConfig{
-			Level:       cl,
-			ForceColors: conf.Get("log.console.color").BoolD(true),
+			Level: cl,
 		})
 		hooks = append(hooks, h)
 	}
@@ -21,15 +20,14 @@ func init() {
 	fl, err := ParseLevel(conf.Get("log.file.level").String())
 	if err == nil {
 		h := NewFileHook(&FileHookConfig{
-			Level:       fl,
-			ForceColors: conf.Get("log.file.color").BoolD(false),
-			ForceJSON:   conf.Get("log.file.json").BoolD(false),
-			Filename:    conf.Get("log.file.path").String(),
-			MaxSize:     int(conf.Get("log.file.max_size").Int64()),
-			MaxAge:      int(conf.Get("log.file.max_age").Int64()),
-			MaxBackups:  int(conf.Get("log.file.max_backups").Int64()),
-			LocalTime:   conf.Get("log.file.local_time").Bool(),
-			Compress:    conf.Get("log.file.compress").Bool(),
+			Level:      fl,
+			ForceJSON:  conf.Get("log.file.json").BoolD(false),
+			Filename:   conf.Get("log.file.path").String(),
+			MaxSize:    int(conf.Get("log.file.max_size").Int64()),
+			MaxAge:     int(conf.Get("log.file.max_age").Int64()),
+			MaxBackups: int(conf.Get("log.file.max_backups").Int64()),
+			LocalTime:  conf.Get("log.file.local_time").Bool(),
+			Compress:   conf.Get("log.file.compress").Bool(),
 		})
 		hooks = append(hooks, h)
 	}

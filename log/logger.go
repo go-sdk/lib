@@ -31,7 +31,7 @@ func NewWithLevel(level Level) *Logger {
 	}
 	log.SetOutput(io.Discard)
 	log.SetLevel(level)
-	log.AddHook(NewConsoleHook(&ConsoleHookConfig{Level: level, ForceColors: true}))
+	log.AddHook(NewConsoleHook(&ConsoleHookConfig{Level: level}))
 	return log
 }
 

@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/mattn/go-colorable"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -53,23 +54,21 @@ func (h *hook) SetLevel(level Level) {
 }
 
 type ConsoleHookConfig struct {
-	Level       Level
-	ForceColors bool
+	Level Level
 }
 
 func NewConsoleHook(configs ...*ConsoleHookConfig) *hook {
 	config := &ConsoleHookConfig{
-		Level:       InfoLevel,
-		ForceColors: true,
+		Level: InfoLevel,
 	}
 	if len(configs) > 0 && configs[0] != nil {
 		config = configs[0]
 	}
 
 	h := &hook{}
-	h.w = os.Stdout
+	h.w = colorable.NewColorableStdout()
 	h.f = &TextFormatter{
-		ForceColors:     config.ForceColors,
+		ForceColors:     true,
 		DisableQuote:    true,
 		FullTimestamp:   true,
 		TimestampFormat: timeFormatter,
@@ -79,15 +78,14 @@ func NewConsoleHook(configs ...*ConsoleHookConfig) *hook {
 }
 
 type FileHookConfig struct {
-	Level       Level
-	ForceColors bool
-	ForceJSON   bool
-	Filename    string
-	MaxSize     int
-	MaxAge      int
-	MaxBackups  int
-	LocalTime   bool
-	Compress    bool
+	Level      Level
+	ForceJSON  bool
+	Filename   string
+	MaxSize    int
+	MaxAge     int
+	MaxBackups int
+	LocalTime  bool
+	Compress   bool
 }
 
 func NewFileHook(configs ...*FileHookConfig) *hook {
@@ -126,7 +124,7 @@ func NewFileHook(configs ...*FileHookConfig) *hook {
 		}
 	} else {
 		h.f = &TextFormatter{
-			ForceColors:     config.ForceColors,
+			DisableColors:   true,
 			DisableQuote:    true,
 			FullTimestamp:   true,
 			TimestampFormat: timeFormatter,
