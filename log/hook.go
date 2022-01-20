@@ -8,6 +8,8 @@ import (
 	"github.com/mattn/go-colorable"
 	"github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
+
+	"github.com/go-sdk/lib/internal/pathx"
 )
 
 const timeFormatter = "2006-01-02T15:04:05.000Z07:00"
@@ -89,8 +91,8 @@ type FileHookConfig struct {
 }
 
 func NewFileHook(configs ...*FileHookConfig) *hook {
-	path, err := os.Executable()
-	if err != nil {
+	path := pathx.SelfPath
+	if path == "" {
 		path = os.TempDir()
 	}
 	path = filepath.Dir(path)

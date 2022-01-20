@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-sdk/lib/codec/json"
 	"github.com/go-sdk/lib/codec/yaml"
+	"github.com/go-sdk/lib/internal/pathx"
 	"github.com/go-sdk/lib/val"
 )
 
@@ -151,8 +152,7 @@ func cps() (p []string) {
 			p = append(p, prefix+defaultConfigPaths[k])
 		}
 	}
-	exec, _ := os.Executable()
-	execDir := filepath.Dir(exec) + string(os.PathSeparator)
+	execDir := filepath.Dir(pathx.SelfPath) + string(os.PathSeparator)
 	for i, l := 0, len(p); i < l; i++ {
 		p = append(p, execDir+p[i])
 	}
