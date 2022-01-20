@@ -49,7 +49,7 @@ func (app *app) Recover() {
 		if !ok {
 			err = fmt.Errorf("%v", r)
 		}
-		app.logger.Errorf("recover: %v\n%s\n", err, stack.Stack())
+		app.logger.Errorf("recover: %v\n%s\n", err, stack.Stack(3))
 	}
 }
 

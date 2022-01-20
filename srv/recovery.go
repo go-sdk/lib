@@ -38,7 +38,7 @@ func Recovery() HandlerFunc {
 				if brokenPipe {
 					log.Errorf("%v\n%s", err, headersToStr)
 				} else {
-					log.Errorf("recover: %v\n%s%s", err, headersToStr, stack.Stack())
+					log.Errorf("recover: %v\n%s%s", err, headersToStr, stack.Stack(3))
 				}
 
 				if brokenPipe {
