@@ -8,16 +8,16 @@ import (
 
 var (
 	paths = []string{
-		"../testdata/config.yaml",
-		"../testdata/config.json",
+		"../internal/testdata/config.yaml",
+		"../internal/testdata/config.json",
 	}
 
 	errPaths = []string{
-		"../testdata/config_err.json",
+		"../internal/testdata/config_err.json",
 	}
 
 	testPaths = []string{
-		"../testdata/config_clash.yaml",
+		"../internal/testdata/config_clash.yaml",
 	}
 )
 

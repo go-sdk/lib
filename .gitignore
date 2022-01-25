@@ -11,4 +11,4 @@ gen
 *.test
 *.out
 
-config.yaml
+/config.yaml
