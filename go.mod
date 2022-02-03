@@ -3,7 +3,7 @@ module github.com/go-sdk/lib
 go 1.17
 
 require (
-	github.com/brianvoe/gofakeit/v6 v6.14.3
+	github.com/brianvoe/gofakeit/v6 v6.14.5
 	github.com/davecgh/go-spew v1.1.1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/gzip v0.0.5
