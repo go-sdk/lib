@@ -1,5 +1,23 @@
 # Changelog
 
+### [0.0.12](https://github.com/go-sdk/lib/compare/v0.0.11...v0.0.12) (2022-02-07)
+
+
+### Features
+
+* add colorable to log print ([f543dc9](https://github.com/go-sdk/lib/commit/f543dc937789d4f0ff7e68324a597a6ccd098324))
+* add error debug ([2144b46](https://github.com/go-sdk/lib/commit/2144b4609f55f89dd4fa425bdb5bee9d57d7719d))
+* add faker ([61ed940](https://github.com/go-sdk/lib/commit/61ed940533794c86790b4a8cb0b6bfa6ab316c7e))
+* add self binary md5 version ([7a6b5e2](https://github.com/go-sdk/lib/commit/7a6b5e21eeca856dfb5d7d7bb639d447d015e39e))
+* add srv test helper ([b2a1326](https://github.com/go-sdk/lib/commit/b2a1326dad29de58923564597e8f59857a09305f))
+* add validate ([3bc1e82](https://github.com/go-sdk/lib/commit/3bc1e82aceb4c544bb3ad8527b8b75201151d233))
+* set default stack ([5f548d5](https://github.com/go-sdk/lib/commit/5f548d5b1bbfc4bab8ba7d19474c577332e36d84))
+
+
+### Bug Fixes
+
+* move testdata to internal package ([56e7cc8](https://github.com/go-sdk/lib/commit/56e7cc888c1c3e4b4cde6ebf82d0755142381a5f))
+
 ### [0.0.11](https://github.com/go-sdk/lib/compare/v0.0.10...v0.0.11) (2022-01-18)
 
 
