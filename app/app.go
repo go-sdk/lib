@@ -26,10 +26,13 @@ type app struct {
 	errCh  chan error
 	logger *log.Logger
 
-	ss []Services
+	ss []ServiceWithCtx
 }
 
-type Services func() error
+type (
+	Service        func() error
+	ServiceWithCtx func(ctx context.Context) error
+)
 
 func New(name string) *app {
 	a := &app{}
@@ -43,65 +46,80 @@ func New(name string) *app {
 	return a
 }
 
-func (app *app) Recover() {
+func (a *app) Recover() {
 	if r := recover(); r != nil {
 		err, ok := r.(error)
 		if !ok {
 			err = fmt.Errorf("%v", r)
 		}
-		app.logger.Errorf("recover: %v\n%s\n", err, stack.Stack(3))
+		a.logger.Errorf("recover: %v\n%s\n", err, stack.Stack(3))
 	}
 }
 
-func (app *app) Add(ss ...Services) {
+func (a *app) Add(ss ...Service) {
 	if len(ss) == 0 {
 		return
 	}
-	app.mu.Lock()
-	defer app.mu.Unlock()
-	if app.starting {
+	nss := make([]ServiceWithCtx, len(ss))
+	for i := 0; i < len(ss); i++ {
+		nss[i] = wrapCtx(ss[i])
+	}
+	a.AddWithCtx(nss...)
+}
+
+func wrapCtx(s Service) ServiceWithCtx {
+	return func(context.Context) error { return s() }
+}
+
+func (a *app) AddWithCtx(ss ...ServiceWithCtx) {
+	if len(ss) == 0 {
 		return
 	}
-	app.ss = append(app.ss, ss...)
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	if a.starting {
+		return
+	}
+	a.ss = append(a.ss, ss...)
 }
 
-func (app *app) Start() {
-	go func() { _ = app.run() }()
+func (a *app) Start() {
+	go func() { _ = a.run() }()
 }
 
-func (app *app) Stop() {
-	app.cancel()
+func (a *app) Stop() {
+	a.cancel()
 }
 
-func (app *app) Run() error {
-	return app.run()
+func (a *app) Run() error {
+	return a.run()
 }
 
-func (app *app) Once() error {
-	return app.run(true)
+func (a *app) Once() error {
+	return a.run(true)
 }
 
 var signals = []os.Signal{syscall.SIGTERM, syscall.SIGQUIT, syscall.SIGKILL, syscall.SIGINT}
 
-func (app *app) run(once ...bool) error {
-	app.mu.Lock()
-	if app.starting {
-		app.mu.Unlock()
+func (a *app) run(once ...bool) error {
+	a.mu.Lock()
+	if a.starting {
+		a.mu.Unlock()
 		return fmt.Errorf("app starting")
 	}
-	app.starting = true
-	app.mu.Unlock()
+	a.starting = true
+	a.mu.Unlock()
 
-	defer func() { app.mu.Lock(); app.starting = false; app.mu.Unlock() }()
+	defer func() { a.mu.Lock(); a.starting = false; a.mu.Unlock() }()
 
-	app.logger.WithFields(log.Fields{"ver": VERSION, "hash": GITHASH, "built": BUILT, "go": GOVERSION, "os": GOOS, "arch": GOARCH}).Infof("app start")
+	a.logger.WithFields(log.Fields{"ver": VERSION, "hash": GITHASH, "built": BUILT, "go": GOVERSION, "os": GOOS, "arch": GOARCH}).Infof("app start")
 
-	for i := 0; i < len(app.ss); i++ {
-		s := app.ss[i]
+	for i := 0; i < len(a.ss); i++ {
+		s := a.ss[i]
 		if len(once) == 0 || !once[0] {
-			go func() { app.errCh <- s() }()
+			go func() { a.errCh <- s(a.ctx) }()
 		} else {
-			app.eg.Go(func() error { return s() })
+			a.eg.Go(func() error { return s(a.ctx) })
 		}
 	}
 
@@ -111,32 +129,32 @@ func (app *app) run(once ...bool) error {
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, signals...)
 
-		app.eg.Go(func() error {
+		a.eg.Go(func() error {
 			for {
 				select {
-				case err = <-app.errCh:
+				case err = <-a.errCh:
 					if err != nil {
-						app.Stop()
+						a.Stop()
 					}
 				case <-ch:
-					app.Stop()
-				case <-app.ctx.Done():
-					return app.ctx.Err()
+					a.Stop()
+				case <-a.ctx.Done():
+					return a.ctx.Err()
 				}
 			}
 		})
 	}
 
-	app.logger.Infof("app started")
+	a.logger.Infof("app started")
 
 	defer func() {
-		app.logger.Infof("app stopped")
+		a.logger.Infof("app stopped")
 		if err != nil {
-			app.logger.Errorf("app start fail")
+			a.logger.Errorf("app start fail")
 		}
 	}()
 
-	ege := app.eg.Wait()
+	ege := a.eg.Wait()
 
 	if err != nil {
 		return err
