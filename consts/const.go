@@ -6,6 +6,7 @@ const (
 	TraceId       = "x-request-id"
 
 	ContentTypeJSON = "application/json"
+	ContentTypeGRPC = "application/grpc"
 
 	CToken    = "ctx_token"
 	CTokenRaw = "ctx_token_raw"

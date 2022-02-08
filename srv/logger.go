@@ -146,7 +146,7 @@ func genRespContent(writer *responseWriter) (respBody string, code string) {
 		jd := json.NewDecoder(bytes.NewReader(respBS))
 		jd.DisallowUnknownFields()
 		if err := jd.Decode(e); err == nil {
-			respBody += ", " + e.Error
+			respBody += ", " + e.Code
 			if e.Message != "" {
 				respBody += " (" + e.Message + ")"
 			}

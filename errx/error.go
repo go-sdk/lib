@@ -7,13 +7,14 @@ import (
 	"strings"
 	"time"
 
+	"google.golang.org/grpc/status"
+
 	"github.com/go-sdk/lib/consts"
 	"github.com/go-sdk/lib/seq"
 )
 
 type Error struct {
 	Status    int    `json:"status"`
-	Error     string `json:"error"`
 	Code      string `json:"code,omitempty"`
 	Message   string `json:"message,omitempty"`
 	Timestamp string `json:"ts"`
@@ -32,6 +33,10 @@ func (e *Error) WithCode(code string) *Error {
 	return e
 }
 
+func (e *Error) Error() string {
+	return e.String()
+}
+
 func (e *Error) String() string {
 	sb := strings.Builder{}
 	sb.WriteString("[")
@@ -40,8 +45,6 @@ func (e *Error) String() string {
 	sb.WriteString(e.TraceId)
 	sb.WriteString(") ")
 	sb.WriteString(strconv.Itoa(e.Status))
-	sb.WriteString(" ")
-	sb.WriteString(e.Error)
 	if e.Code != "" {
 		sb.WriteString(", ")
 		sb.WriteString(e.Code)
@@ -91,7 +94,22 @@ func New(status int, message string) *Error {
 		Message:   message,
 		Timestamp: time.Now().Format(time.RFC3339Nano),
 	}
-	e.Error = http.StatusText(e.Status)
 	e.TraceId = seq.NewUUID().String()
 	return e
+}
+
+func FromError(err error) *Error {
+	if err == nil {
+		return nil
+	}
+
+	if se, ok := status.FromError(err); ok {
+		return InternalError(se.Message()).WithCode(se.Code().String())
+	}
+
+	if e, ok := err.(*Error); ok {
+		return e
+	}
+
+	return InternalError(err.Error())
 }
