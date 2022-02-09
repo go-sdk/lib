@@ -20,7 +20,10 @@ var (
 )
 
 func MustMarshal(v interface{}) []byte {
-	bs, _ := Marshal(v)
+	bs, err := Marshal(v)
+	if err != nil {
+		panic(err)
+	}
 	return bs
 }
 
