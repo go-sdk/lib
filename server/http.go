@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/go-sdk/lib/codec/json"
+	"github.com/go-sdk/lib/consts"
 	"github.com/go-sdk/lib/errx"
 )
 
@@ -24,23 +25,40 @@ func (s *Server) handlePath(method, path string, hs []MHandler, h HandlerFunc) {
 	}
 }
 
+type hw struct {
+	ContentType string
+	Status      int
+	Body        []byte
+}
+
 func WrapHandlerFunc(h HandlerFunc) MHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+		x := hw{}
+
 		resp, err := h(r.Context().(*Context))
 		if e := errx.FromError(err); e != nil {
-			w.WriteHeader(e.Status)
-			w.Write(json.MustMarshal(e))
+			x.ContentType = consts.ContentTypeJSON
+			x.Status = e.Status
+			x.Body = json.MustMarshalX(e)
 		} else {
-			w.WriteHeader(http.StatusOK)
+			x.Status = http.StatusOK
 			switch v := resp.(type) {
 			case []byte:
-				w.Write(v)
+				x.Body = v
 			case string:
-				w.Write([]byte(v))
+				x.Body = []byte(v)
 			default:
-				w.Write(json.MustMarshal(v))
+				x.ContentType = consts.ContentTypeJSON
+				x.Body = json.MustMarshalX(v)
 			}
 		}
+
+		if w.Header().Get(consts.ContentType) == "" && x.ContentType != "" {
+			w.Header().Set(consts.ContentType, x.ContentType)
+		}
+		w.WriteHeader(x.Status)
+		w.Write(x.Body)
+
 		next(w, r)
 	}
 }
@@ -58,6 +76,16 @@ type httpRouterGroup struct {
 
 	base string
 	hs   []MHandler
+}
+
+func (g *httpRouterGroup) Group(path string, hs ...MHandlerFunc) *httpRouterGroup {
+	gl := len(g.hs)
+	mhs := make([]MHandler, gl+len(hs))
+	copy(mhs, g.hs)
+	for i := 0; i < len(hs); i++ {
+		mhs[gl+i] = hs[i]
+	}
+	return &httpRouterGroup{s: g.s, base: joinPaths(g.base, path), hs: mhs}
 }
 
 func (g *httpRouterGroup) HandlePath(method, path string, h HandlerFunc) {
