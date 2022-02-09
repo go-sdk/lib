@@ -77,14 +77,11 @@ func New(ctx context.Context) *Server {
 	s.ctx, s.cancel = context.WithCancel(ctx)
 	s.eg, s.ctx = errgroup.WithContext(s.ctx)
 	s.logger = log.DefaultLogger()
-	s.gs = grpc.NewServer(gServerOptions...)
-	s.hsm = runtime.NewServeMux(gServeOptions...)
 	s.ghs = health.NewServer()
 	s.gsd = map[*grpc.ServiceDesc]interface{}{}
-	s.hhf = make([]MHandler, len(hHandlersFunc))
-	for i := 0; i < len(hHandlersFunc); i++ {
-		s.hhf[i] = hHandlersFunc[i]
-	}
+	s.SetServerOptions(gServerOptions...)
+	s.SetServeMuxOptions(gServeOptions...)
+	s.SetHandlersFunc(hHandlersFunc...)
 	return s
 }
 
@@ -167,4 +164,19 @@ func (s *Server) Stop() error {
 	_ = s.lis.Close()
 	s.cancel()
 	return nil
+}
+
+func (s *Server) SetServerOptions(opts ...grpc.ServerOption) {
+	s.gs = grpc.NewServer(opts...)
+}
+
+func (s *Server) SetServeMuxOptions(opts ...runtime.ServeMuxOption) {
+	s.hsm = runtime.NewServeMux(opts...)
+}
+
+func (s *Server) SetHandlersFunc(hfs ...MHandlerFunc) {
+	s.hhf = make([]MHandler, len(hfs))
+	for i := 0; i < len(hfs); i++ {
+		s.hhf[i] = hfs[i]
+	}
 }
