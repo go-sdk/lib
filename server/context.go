@@ -17,7 +17,7 @@ type Context struct {
 	keys map[string]interface{}
 }
 
-func NewContext(w http.ResponseWriter, r *http.Request, p map[string]string) *Context {
+func WithContext(w http.ResponseWriter, r *http.Request, p map[string]string) *Context {
 	c := &Context{W: w, R: r, p: p}
 	c.keys = map[string]interface{}{}
 	return c

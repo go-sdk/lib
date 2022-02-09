@@ -16,7 +16,7 @@ func (s *Server) HandlePath(method, path string, h HandlerFunc) {
 func (s *Server) handlePath(method, path string, hs []MHandler, h HandlerFunc) {
 	m := buildMiddleware(append(append(s.hhf, hs...), WrapHandlerFunc(h)))
 	err := s.hsm.HandlePath(method, joinPaths("", path), func(w http.ResponseWriter, r *http.Request, p map[string]string) {
-		r = r.WithContext(NewContext(w, r, p))
+		r = r.WithContext(WithContext(w, r, p))
 		m.ServeHTTP(w, r)
 	})
 	if err != nil {
