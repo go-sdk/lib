@@ -38,7 +38,7 @@ func WrapHandlerFunc(h HandlerFunc) MHandlerFunc {
 		resp, err := h(r.Context().(*Context))
 		if e := errx.FromError(err); e != nil {
 			x.ContentType = consts.ContentTypeJSON
-			x.Status = e.Status
+			x.Status = e.Status()
 			x.Body = json.MustMarshalX(e)
 		} else {
 			x.Status = http.StatusOK

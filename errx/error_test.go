@@ -1,78 +1,36 @@
 package errx
 
 import (
-	"net/http"
 	"testing"
-	"time"
-
-	"github.com/stretchr/testify/assert"
 
 	"github.com/go-sdk/lib/codec/json"
-	"github.com/go-sdk/lib/consts"
-	"github.com/go-sdk/lib/seq"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 func TestError(t *testing.T) {
-	t.Log(OK(""))
-	t.Log(OK("biz_message"))
-	t.Log(OK("biz_message").WithCode("OK"))
-	t.Log(BadRequest("biz_message"))
-	t.Log(Unauthorized("biz_message"))
-	t.Log(Forbidden("biz_message"))
-	t.Log(NotFound("biz_message"))
-	t.Log(NotAllowed("biz_message"))
-	t.Log(Conflict("biz_message"))
-	t.Log(InternalError("biz_message"))
-}
+	t.Log(OK("OK"))
+	t.Log(BadRequest("BadRequest"))
+	t.Log(Unauthorized("Unauthorized"))
+	t.Log(Forbidden("Forbidden"))
+	t.Log(NotFound("NotFound"))
+	t.Log(Conflict("Conflict"))
+	t.Log(Internal("Internal"))
+	t.Log(NotImplemented("NotImplemented"))
 
-func TestError_WithContext(t *testing.T) {
-	id := seq.NewUUID().String()
-	ctx := NewContext(id)
-	e := OK("biz_message").WithContext(ctx)
-	t.Log(e)
-	assert.Equal(t, id, e.TraceId)
-	t.Log(json.PrettyT(e))
-}
+	e1 := OK("OK")
+	t.Log(e1.WithMetadata(Metadata{"code": 0}))
+	t.Log(e1)
+	t.Log(json.MustMarshalToString(e1))
 
-func NewContext(id string) *Context {
-	header := http.Header{}
-	header.Add(consts.TraceId, id)
-	return &Context{
-		Request: &http.Request{Header: header},
-		Keys:    map[string]interface{}{},
-	}
-}
+	e2 := BadRequest("BadRequest").WithMetadata(Metadata{"username": "6"})
+	t.Log(e2)
+	t.Log(e2.Status())
+	t.Log(e2.Message())
+	t.Log(e2.Metadata())
+	t.Log(e2.GetMetadata("username"))
 
-type Context struct {
-	Request *http.Request
-
-	Keys map[string]interface{}
-}
-
-func (c Context) Deadline() (deadline time.Time, ok bool) {
-	return
-}
-
-func (c Context) Done() <-chan struct{} {
-	return nil
-}
-
-func (c Context) Err() error {
-	return nil
-}
-
-func (c Context) Value(key interface{}) interface{} {
-	if key == 0 {
-		return c.Request
-	}
-	if keyAsString, ok := key.(string); ok {
-		val, _ := c.Get(keyAsString)
-		return val
-	}
-	return nil
-}
-
-func (c *Context) Get(key string) (value interface{}, exists bool) {
-	value, exists = c.Keys[key]
-	return
+	e3 := status.New(codes.Unimplemented, "Unimplemented").Err()
+	e4 := FromError(e3)
+	t.Log(e4)
 }

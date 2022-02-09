@@ -1,115 +1,137 @@
 package errx
 
 import (
-	"context"
+	"fmt"
 	"net/http"
-	"strconv"
-	"strings"
-	"time"
 
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/structpb"
 
-	"github.com/go-sdk/lib/consts"
-	"github.com/go-sdk/lib/seq"
+	"github.com/go-sdk/lib/codec/json"
 )
 
+type GRPCError interface {
+	GRPCStatus() *status.Status
+}
+
 type Error struct {
-	Status    int    `json:"status"`
-	Code      string `json:"code,omitempty"`
-	Message   string `json:"message,omitempty"`
-	Timestamp string `json:"ts"`
-	TraceId   string `json:"tid"`
+	status   int
+	message  string
+	metadata Metadata
 }
 
-func (e *Error) WithContext(ctx context.Context) *Error {
-	if req, ok := ctx.Value(0).(*http.Request); ok {
-		e.TraceId = req.Header.Get(consts.TraceId)
-	}
-	return e
+type Metadata map[string]interface{}
+
+func New(status int, format string, a ...interface{}) *Error {
+	return &Error{status: status, message: fmt.Sprintf(format, a...)}
 }
 
-func (e *Error) WithCode(code string) *Error {
-	e.Code = code
-	return e
+func OK(format string, a ...interface{}) *Error {
+	return New(http.StatusOK, format, a...)
 }
 
-func (e *Error) Error() string {
-	return e.String()
+func BadRequest(format string, a ...interface{}) *Error {
+	return New(http.StatusBadRequest, format, a...)
 }
 
-func (e *Error) String() string {
-	sb := strings.Builder{}
-	sb.WriteString("[")
-	sb.WriteString(e.Timestamp)
-	sb.WriteString("] (")
-	sb.WriteString(e.TraceId)
-	sb.WriteString(") ")
-	sb.WriteString(strconv.Itoa(e.Status))
-	if e.Code != "" {
-		sb.WriteString(", ")
-		sb.WriteString(e.Code)
-	}
-	if e.Message != "" {
-		sb.WriteString(", ")
-		sb.WriteString(e.Message)
-	}
-	return sb.String()
+func Unauthorized(format string, a ...interface{}) *Error {
+	return New(http.StatusUnauthorized, format, a...)
 }
 
-func OK(message string) *Error {
-	return New(http.StatusOK, message)
+func Forbidden(format string, a ...interface{}) *Error {
+	return New(http.StatusForbidden, format, a...)
 }
 
-func BadRequest(message string) *Error {
-	return New(http.StatusBadRequest, message)
+func NotFound(format string, a ...interface{}) *Error {
+	return New(http.StatusNotFound, format, a...)
 }
 
-func Unauthorized(message string) *Error {
-	return New(http.StatusUnauthorized, message)
+func Conflict(format string, a ...interface{}) *Error {
+	return New(http.StatusConflict, format, a...)
 }
 
-func Forbidden(message string) *Error {
-	return New(http.StatusForbidden, message)
+func Internal(format string, a ...interface{}) *Error {
+	return New(http.StatusInternalServerError, format, a...)
 }
 
-func NotFound(message string) *Error {
-	return New(http.StatusNotFound, message)
-}
-
-func NotAllowed(message string) *Error {
-	return New(http.StatusMethodNotAllowed, message)
-}
-
-func Conflict(message string) *Error {
-	return New(http.StatusConflict, message)
-}
-
-func InternalError(message string) *Error {
-	return New(http.StatusInternalServerError, message)
-}
-
-func New(status int, message string) *Error {
-	e := &Error{
-		Status:    status,
-		Message:   message,
-		Timestamp: time.Now().Format(time.RFC3339Nano),
-	}
-	e.TraceId = seq.NewUUID().String()
-	return e
+func NotImplemented(format string, a ...interface{}) *Error {
+	return New(http.StatusNotImplemented, format, a...)
 }
 
 func FromError(err error) *Error {
 	if err == nil {
 		return nil
 	}
-
 	if se, ok := status.FromError(err); ok {
-		return InternalError(se.Message()).WithCode(se.Code().String())
-	}
-
-	if e, ok := err.(*Error); ok {
+		e := New(HTTPStatusFromCode(se.Code()), se.Message())
+		if len(se.Details()) > 0 {
+			if v, y := se.Details()[0].(*structpb.Struct); y {
+				return e.WithMetadata(v.AsMap())
+			}
+		}
 		return e
 	}
+	return New(http.StatusInternalServerError, err.Error())
+}
 
-	return InternalError(err.Error())
+func (e *Error) Status() int {
+	return e.status
+}
+
+func (e *Error) Message() string {
+	return e.message
+}
+
+func (e *Error) Metadata() Metadata {
+	m := map[string]interface{}{}
+	for k, v := range e.metadata {
+		m[k] = v
+	}
+	return m
+}
+
+func (e *Error) GetMetadata(key string) interface{} {
+	if len(e.metadata) > 0 {
+		return e.metadata[key]
+	}
+	return nil
+}
+
+func (e *Error) Error() string {
+	s := fmt.Sprintf("error: status: %d, message: %s", e.status, e.message)
+	if len(e.metadata) > 0 {
+		s += fmt.Sprintf(", metadata: %+v", e.metadata)
+	}
+	return s
+}
+
+func (e *Error) MarshalJSON() ([]byte, error) {
+	return json.ProtoMarshal(e.GRPCStatus().Proto())
+}
+
+func (e *Error) GRPCStatus() *status.Status {
+	s := status.New(GRPCCodeFromStatus(e.status), e.message)
+	if s.Code() == codes.OK || len(e.metadata) == 0 {
+		return s
+	}
+	d, err := structpb.NewStruct(e.metadata)
+	if err == nil {
+		s, _ = s.WithDetails(d)
+	}
+	return s
+}
+
+func (e Error) WithMetadata(md Metadata) *Error {
+	if e.status == http.StatusOK || len(md) == 0 {
+		return &e
+	}
+	if len(e.metadata) > 0 {
+		for k, v := range md {
+			e.metadata[k] = v
+		}
+	} else {
+		e.metadata = md
+	}
+	return &e
 }
