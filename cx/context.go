@@ -2,6 +2,7 @@ package cx
 
 import (
 	"context"
+	"strings"
 
 	"google.golang.org/grpc/metadata"
 )
@@ -34,6 +35,9 @@ func FromContext(cs ...context.Context) *Context {
 
 	if md, ok := metadata.FromIncomingContext(ctx); ok {
 		for k, vs := range md {
+			if strings.HasPrefix(k, ":") {
+				continue
+			}
 			for i := len(vs) - 1; i >= 0; i-- {
 				kv = append([]string{k, vs[i]}, kv...)
 			}
@@ -69,7 +73,18 @@ func (c *Context) Append(kv ...string) {
 	c.Context = metadata.AppendToOutgoingContext(c.Context, kv...)
 }
 
-func (c *Context) Get(key string) []string {
+func (c *Context) GetRaw(key string) []string {
 	md, _ := metadata.FromOutgoingContext(c.Context)
 	return md.Get(key)
+}
+
+func (c *Context) Get(key string) string {
+	md, _ := metadata.FromOutgoingContext(c.Context)
+	vs := md.Get(key)
+	for i := len(vs) - 1; i >= 0; i-- {
+		if vs[i] != "" {
+			return vs[i]
+		}
+	}
+	return ""
 }
