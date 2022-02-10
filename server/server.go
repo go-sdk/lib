@@ -138,10 +138,8 @@ func (s *Server) Start(addr string) error {
 
 	s.eg.Go(func() error {
 		for {
-			select {
-			case <-s.ctx.Done():
-				return s.Stop()
-			}
+			<-s.ctx.Done()
+			return s.Stop()
 		}
 	})
 

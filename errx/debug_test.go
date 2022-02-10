@@ -14,6 +14,7 @@ func init() {
 func TestNotEmpty(t *testing.T) {
 	err := errors.New("xyz")
 	if NotEmpty(err) {
+		t.Log("not empty")
 	}
 }
 

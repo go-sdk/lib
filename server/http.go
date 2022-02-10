@@ -57,7 +57,7 @@ func WrapHandlerFunc(h HandlerFunc) MHandlerFunc {
 			w.Header().Set(consts.ContentType, x.ContentType)
 		}
 		w.WriteHeader(x.Status)
-		w.Write(x.Body)
+		_, _ = w.Write(x.Body)
 
 		next(w, r)
 	}
