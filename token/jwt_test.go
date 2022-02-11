@@ -27,6 +27,9 @@ func TestNew(t *testing.T) {
 	assert.NoError(t, err)
 	t.Log(tk2.GetExtra())
 
+	_, err = Parse("bEaRer " + str)
+	assert.NoError(t, err)
+
 	tk3 := New("*", "2", time.Now().Unix())
 	ctx1 := tk3.WithContext()
 

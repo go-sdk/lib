@@ -5,10 +5,11 @@ import (
 
 	"github.com/go-sdk/lib/codec/json"
 	"github.com/go-sdk/lib/consts"
+	"github.com/go-sdk/lib/cx"
 	"github.com/go-sdk/lib/errx"
 )
 
-type HandlerFunc func(ctx *Context) (interface{}, error)
+type HandlerFunc func(ctx *cx.Context) (interface{}, error)
 
 func (s *Server) HandlePath(method, path string, h HandlerFunc) {
 	s.handlePath(method, path, nil, h)
@@ -17,7 +18,7 @@ func (s *Server) HandlePath(method, path string, h HandlerFunc) {
 func (s *Server) handlePath(method, path string, hs []MHandler, h HandlerFunc) {
 	m := buildMiddleware(append(append(s.hhf, hs...), WrapHandlerFunc(h)))
 	err := s.hsm.HandlePath(method, joinPaths("", path), func(w http.ResponseWriter, r *http.Request, p map[string]string) {
-		r = r.WithContext(WithContext(w, r, p))
+		r = r.WithContext(cx.FromServer(r.Context(), w, r, p))
 		m.ServeHTTP(w, r)
 	})
 	if err != nil {
@@ -35,7 +36,7 @@ func WrapHandlerFunc(h HandlerFunc) MHandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		x := hw{}
 
-		resp, err := h(r.Context().(*Context))
+		resp, err := h(cx.FromContext(r.Context()))
 		if e := errx.FromError(err); e != nil {
 			x.ContentType = consts.ContentTypeJSON
 			x.Status = e.Status()
