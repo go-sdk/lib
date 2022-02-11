@@ -3,6 +3,7 @@ package token
 import (
 	"context"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -16,6 +17,9 @@ import (
 var (
 	key    = []byte(conf.Get("token.key").StringD("99248000-2be6-01ea-b46b-894ce5a0e50b"))
 	expire = conf.Get("token.expire").DurationD(7 * 24 * time.Hour)
+
+	bearerPrefix    = consts.Bearer + " "
+	bearerPrefixLen = len(bearerPrefix)
 
 	mu = sync.Mutex{}
 )
@@ -147,6 +151,9 @@ func (t *Token) Refresh() *Token {
 }
 
 func Parse(s string) (*Token, error) {
+	if strings.HasPrefix(strings.ToLower(s), bearerPrefix) {
+		s = s[bearerPrefixLen:]
+	}
 	t := &Token{c: &claim{}, raw: s}
 	_, err := jwt.ParseWithClaims(s, t.c, func(t *jwt.Token) (interface{}, error) { return key, nil })
 	return t, err
@@ -155,9 +162,6 @@ func Parse(s string) (*Token, error) {
 var ErrNotParsed = fmt.Errorf("token: not parsed")
 
 func FromContext(ctx context.Context) (*Token, error) {
-	if t, ok := ctx.Value(consts.CToken).(*Token); ok {
-		return t, nil
-	}
 	if t, ok := ctx.Value(tokenKey{}).(*Token); ok && t.c != nil {
 		return t, nil
 	}

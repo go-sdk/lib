@@ -5,7 +5,11 @@ import (
 	"strings"
 
 	"google.golang.org/grpc/metadata"
+
+	"github.com/go-sdk/lib/consts"
 )
+
+type MD = metadata.MD
 
 type Context struct {
 	context.Context
@@ -73,11 +77,6 @@ func (c *Context) Append(kv ...string) {
 	c.Context = metadata.AppendToOutgoingContext(c.Context, kv...)
 }
 
-func (c *Context) GetRaw(key string) []string {
-	md, _ := metadata.FromOutgoingContext(c.Context)
-	return md.Get(key)
-}
-
 func (c *Context) Get(key string) string {
 	md, _ := metadata.FromOutgoingContext(c.Context)
 	vs := md.Get(key)
@@ -87,4 +86,33 @@ func (c *Context) Get(key string) string {
 		}
 	}
 	return ""
+}
+
+func Get(ctx context.Context, key string) string {
+	return FromContext(ctx).Get(key)
+}
+
+func (c *Context) GetRaw(key string) []string {
+	md, _ := metadata.FromOutgoingContext(c.Context)
+	return md.Get(key)
+}
+
+func (c *Context) GetAll() MD {
+	md, _ := metadata.FromOutgoingContext(c.Context)
+	return md
+}
+
+func (c *Context) GetQuery(keys ...string) string {
+	if len(keys) == 0 {
+		keys = []string{""}
+	}
+	key := keys[0]
+	if key != "" {
+		key = "-" + key
+	}
+	return c.Get(consts.Query + key)
+}
+
+func GetQuery(ctx context.Context, keys ...string) string {
+	return FromContext(ctx).GetQuery(keys...)
 }

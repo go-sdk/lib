@@ -13,7 +13,6 @@ import (
 	"google.golang.org/grpc/health"
 	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/reflection"
-	"google.golang.org/protobuf/encoding/protojson"
 
 	"github.com/go-sdk/lib/consts"
 	"github.com/go-sdk/lib/errgroup"
@@ -42,18 +41,6 @@ type Server struct {
 var (
 	maxRecvMsgSize = 16 * 1024 * 1024
 
-	defaultServeMarshaler = &runtime.HTTPBodyMarshaler{
-		Marshaler: &runtime.JSONPb{
-			MarshalOptions: protojson.MarshalOptions{
-				UseEnumNumbers:  true,
-				EmitUnpopulated: true,
-			},
-			UnmarshalOptions: protojson.UnmarshalOptions{
-				DiscardUnknown: true,
-			},
-		},
-	}
-
 	gServerOptions = []grpc.ServerOption{
 		grpc.MaxRecvMsgSize(maxRecvMsgSize),
 		grpc.ChainUnaryInterceptor(middleware.InitUnary, middleware.LoggerUnary, middleware.AuthUnary, middleware.ValidatorUnary),
@@ -61,7 +48,10 @@ var (
 	}
 
 	gServeOptions = []runtime.ServeMuxOption{
-		runtime.WithMarshalerOption("*", defaultServeMarshaler),
+		runtime.WithMarshalerOption("*", serveMarshaler),
+		runtime.WithMetadata(serveMetadata),
+		runtime.WithIncomingHeaderMatcher(serveIncomingHeaderMatcher),
+		runtime.WithOutgoingHeaderMatcher(serveOutgoingHeaderMatcher),
 	}
 
 	gDialOptions = []grpc.DialOption{
