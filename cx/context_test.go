@@ -35,7 +35,8 @@ func TestContext(t *testing.T) {
 	assert.Equal(t, []string{"2"}, ctx2.GetRaw("a"))
 	assert.Equal(t, []string{"1"}, ctx2.GetRaw("b"))
 
-	ctx3 := context.WithValue(ctx1, "x", ".")
+	type key struct{}
+	ctx3 := context.WithValue(ctx1, key{}, ".")
 	ctx4 := FromContext(ctx3)
 	assert.Equal(t, []string{"2"}, ctx4.GetRaw("a"))
 	assert.Equal(t, "2", ctx4.Get("a"))

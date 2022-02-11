@@ -67,7 +67,7 @@ func (s *Server) Write(code int, content string, kv ...string) {
 		s.W.Header().Set(kv[i], kv[i+1])
 	}
 	s.W.WriteHeader(code)
-	s.W.Write([]byte(content))
+	_, _ = s.W.Write([]byte(content))
 }
 
 func (s *Server) WriteJSON(code int, data interface{}, kv ...string) {
