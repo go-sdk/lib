@@ -1,5 +1,14 @@
 # Changelog
 
+### [0.0.14](https://github.com/go-sdk/lib/compare/v0.0.13...v0.0.14) (2022-02-11)
+
+
+### Features
+
+* add context ([1eceda6](https://github.com/go-sdk/lib/commit/1eceda636b6e44a5baa5145492d931c6d195ae72))
+* add context get raw ([04fe69a](https://github.com/go-sdk/lib/commit/04fe69abaafaf5895216767469d97fdfad10e6e1))
+* add server context ([d27dc23](https://github.com/go-sdk/lib/commit/d27dc232c82fae557d01314ff466496a182d9c2f))
+
 ### [0.0.13](https://github.com/go-sdk/lib/compare/v0.0.12...v0.0.13) (2022-02-09)
 
 
