@@ -15,7 +15,7 @@ require (
 	github.com/imdario/mergo v0.3.12
 	github.com/mattn/go-colorable v0.1.12
 	github.com/robfig/cron/v3 v3.0.1
-	github.com/rs/xid v1.3.0
+	github.com/rs/xid v1.4.0
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/soheilhy/cmux v0.1.5
