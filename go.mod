@@ -10,7 +10,7 @@ require (
 	github.com/go-playground/validator/v10 v10.10.1
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
-	github.com/golang-jwt/jwt/v4 v4.3.0
+	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.0
 	github.com/imdario/mergo v0.3.12
 	github.com/mattn/go-colorable v0.1.12
