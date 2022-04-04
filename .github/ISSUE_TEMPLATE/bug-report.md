@@ -26,7 +26,7 @@ If applicable, add screenshots to help explain your problem.
 **Environment**
 OS: [e.g. windows, linux, darwin]
 Arch [e.g. arm, arm64, amd64]
-Version [e.g. 1.17.2]
+Version [e.g. 1.18]
 
 **Additional context**
 Add any other context about the problem here.
