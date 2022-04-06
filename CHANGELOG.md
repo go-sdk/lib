@@ -1,5 +1,13 @@
 # Changelog
 
+### [0.0.15](https://github.com/go-sdk/lib/compare/v0.0.14...v0.0.15) (2022-04-06)
+
+
+### Features
+
+* update go mod ([e8ad4cd](https://github.com/go-sdk/lib/commit/e8ad4cddfc3a2bef451fb75998650fc779536a87))
+* update go version 1.18 ([6a5cde7](https://github.com/go-sdk/lib/commit/6a5cde793c96e8b434683363773e8f25ea54968e))
+
 ### [0.0.14](https://github.com/go-sdk/lib/compare/v0.0.13...v0.0.14) (2022-02-11)
 
 
